@@ -1,0 +1,24 @@
+name: run-unit-tests
+
+on: [pull_request]
+jobs:
+  build:
+    name: run-unit-tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24.10.x"
+
+      - name: Install node dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run unit tests
+        run: npm run test
