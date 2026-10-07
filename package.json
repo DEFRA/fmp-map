@@ -1,5 +1,7 @@
 {
   "scripts": {
+    "lint": "eslint",
+    "eslint": "eslint",
     "test": "jest --runInBand"
   },
   "devDependencies": {
