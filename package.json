@@ -1,16 +1,22 @@
 {
+  "main": "index.js",
   "scripts": {
     "lint": "eslint",
     "eslint": "eslint",
     "test": "NOLOG=true jest --runInBand",
-    "build": "webpack"
+    "build": "webpack",
+    "start": "node index.js"
   },
   "dependencies": {
     "@arcgis/core": "5.1.13",
     "@defra/interactive-map": "0.0.50-alpha",
+    "@hapi/hapi": "21.4.3",
+    "@hapi/inert": "7.1.1",
     "@mapbox/polyline": "1.2.1",
     "@turf/turf": "7.2.0",
     "area-polygon": "1.0.1",
+    "dotenv": "17.2.3",
+    "preact": "10.28.3",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
@@ -20,6 +26,7 @@
     "babel-loader": "10.0.0",
     "css-loader": "7.1.2",
     "eslint": "9.39.5",
+    "html-webpack-plugin": "5.6.8",
     "jest": "^30.5.2",
     "jest-environment-jsdom": "30.5.2",
     "jsdom": "29.1.1",
