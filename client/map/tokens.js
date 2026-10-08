@@ -63,7 +63,7 @@ export const getRequest = async (request) => {
     return null
   }
 
-  if (request.url.startsWith('https://api.os.uk')) {
+  if (new URL(request.url).hostname === 'api.os.uk') {
     const token = (await getOsToken()).token
     return {
       url: url.toString(),

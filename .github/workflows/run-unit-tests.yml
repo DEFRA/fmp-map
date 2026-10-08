@@ -1,6 +1,10 @@
 name: run-unit-tests
 
 on: [pull_request]
+
+permissions:
+  contents: read
+
 jobs:
   build:
     name: run-unit-tests
