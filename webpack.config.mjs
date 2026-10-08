@@ -7,7 +7,8 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname)
 export default {
   entry: {
     map: [
-      path.join(__dirname, 'client/map/index.js')
+      path.join(__dirname, 'client/map/index.js'),
+      path.join(__dirname, 'client/sass/index.scss')
     ]
   },
   devtool: 'source-map',
@@ -47,6 +48,10 @@ export default {
           'css-loader',
           'sass-loader'
         ]
+      },
+      {
+        test: /\.(woff2?|ttf|eot|svg|png|jpe?g|gif)$/i,
+        type: 'asset/resource'
       }
     ]
   },
@@ -57,7 +62,8 @@ export default {
       react: path.resolve(__dirname, 'node_modules/preact/compat'),
       'react-dom/client': path.resolve(__dirname, 'node_modules/preact/compat/client'),
       'react-dom': path.resolve(__dirname, 'node_modules/preact/compat'),
-      'react/jsx-runtime': path.resolve(__dirname, 'node_modules/preact/jsx-runtime')
+      'react/jsx-runtime': path.resolve(__dirname, 'node_modules/preact/jsx-runtime'),
+      '/assets': path.resolve(__dirname, 'node_modules/govuk-frontend/dist/govuk/assets')
     }
   },
   ignoreWarnings: [
