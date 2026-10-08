@@ -32,13 +32,15 @@ module.exports = async () => {
       '/coverage/',
       '/server/public/',
       '__mocks__',
+      '__test-helpers__',
       '\\.snap$'
     ],
     testEnvironment: 'jsdom',
     globals: {
       setImmediate
     },
-    setupFiles: ['<rootDir>/.jest/jest.env.js']
+    setupFiles: ['<rootDir>/.jest/jest.env.js'],
+    setupFilesAfterEnv: ['<rootDir>/.jest/setup.js']
   }
   return config
 }
