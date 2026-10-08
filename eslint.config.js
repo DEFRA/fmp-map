@@ -1,0 +1,23 @@
+'use strict'
+
+const neostandard = require('neostandard')
+
+module.exports = [
+  ...neostandard({
+    env: ['jest', 'node'],
+    ignores: [
+      '**/_results_/',
+      '**/server/public/'
+    ]
+  }),
+  {
+    files: ['client/**'],
+    languageOptions: {
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        XMLHttpRequest: 'readonly'
+      }
+    }
+  }
+]
