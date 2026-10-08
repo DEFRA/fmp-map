@@ -1,5 +1,6 @@
 import path from 'path'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
@@ -13,7 +14,9 @@ export default {
   mode: 'development',
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'build')
+    path: path.resolve(__dirname, 'build'),
+    // relative publicPath so the bundle works when served from a GitHub Pages project subpath
+    publicPath: 'auto'
   },
   optimization: {
     splitChunks: {
@@ -23,6 +26,11 @@ export default {
   plugins: [
     new MiniCssExtractPlugin({
       filename: '[name].css'
+    }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'public/index.html'),
+      chunks: ['map'],
+      inject: false
     })
   ],
   module: {
