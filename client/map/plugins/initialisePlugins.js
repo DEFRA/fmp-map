@@ -11,6 +11,19 @@ import { drawPlugin, framePlugin } from './draw/drawPlugin.js'
 export const plugins = {}
 const pluginArray = []
 
+export const getPlugins = () => pluginArray
+
+export const updatePlugin = (pluginName, overrides) => {
+  if (plugins[pluginName]) {
+    // Ensure that we never overwrite the load method of the plugin
+    Object.assign(plugins[pluginName], overrides, { load: plugins[pluginName].load })
+  }
+}
+
+export const getPluginValues = (pluginName) => {
+  return plugins[pluginName] || null
+}
+
 export const initialisePlugins = (defraMapConfig) => {
   plugins.datasets = initialiseDatasetsPlugin(defraMapConfig)
   plugins.opacitySlider = opacitySliderPlugin(plugins.datasets)
