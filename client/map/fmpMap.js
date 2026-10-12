@@ -3,37 +3,19 @@ import esriProvider from '@defra/interactive-map/providers/esri'
 import { setupEsriConfig, getDefraMapConfig } from './tokens.js'
 import { siteBoundary } from './interactive-map-helpers/siteBoundary.js'
 import { mapState } from './interactive-map-helpers/mapState.js'
-import { initialisePlugins, createPlugins, getPlugins, getPluginValues, attachInteractiveMapToPlugins } from './plugins/initialisePlugins.js'
-
-const ENGLAND_WEST = 50000
-const ENGLAND_SOUTH = 40000
-const ENGLAND_EAST = 400000
-const ENGLAND_NORTH = 650000
-
-const interactiveMapOptions = {
-  behaviour: 'inline',
-  place: 'England',
-  minZoom: 6,
-  maxZoom: 20,
-  extent: siteBoundary.buffedExtents || [ENGLAND_WEST, ENGLAND_SOUTH, ENGLAND_EAST, ENGLAND_NORTH],
-  containerHeight: '100%',
-  enableMapControls: false,
-  enableZoomControls: true
-}
+import { initialisePlugins, attachInteractiveMapToPlugins, getPluginValues, updatePlugin, createPlugins } from './plugins/initialisePlugins.js'
 
 export class FmpMap extends InteractiveMap {
-  constructor (overrides = {}) {
+  constructor (interactiveMapOptions) {
     if (!FmpMap.defraMapConfig) {
       throw new Error('You must await FmpMap.initialise() before creating an FmpMap instance')
     }
-    // const plugins = initialisePlugins(FmpMap.defraMapConfig)
     const mapProvider = esriProvider({ setupConfig: setupEsriConfig })
 
     super('map', {
       mapProvider,
-      plugins: getPlugins(),
       ...interactiveMapOptions,
-      ...overrides
+      extent: siteBoundary.buffedExtents || interactiveMapOptions.extent
     })
     mapState.attach(this)
     attachInteractiveMapToPlugins(this)
@@ -54,10 +36,12 @@ export class FmpMap extends InteractiveMap {
     FmpMap.defraMapConfig = defraMapConfig
     mapState.defraMapConfig = defraMapConfig
     initialisePlugins(defraMapConfig)
-    console.log('Plugin values', getPluginValues())
-    createPlugins()
     return FmpMap.defraMapConfig
   }
 }
+
+FmpMap.getPluginValues = getPluginValues
+FmpMap.updatePlugin = updatePlugin
+FmpMap.createPlugins = createPlugins
 
 globalThis.FmpMap = FmpMap

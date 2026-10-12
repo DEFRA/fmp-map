@@ -9,23 +9,24 @@ let enableGetInfoButton = false
 const INFO_PANEL_ID = 'info'
 const INFO_PANEL_MARKER_ID = 'infoPanelMarker'
 
+const enableWhen = (event) => {
+  // IM-526 Once the im provides an api that returns the interfaceType
+  // or emits an event when the interfaceType changes, we can use that in the reactiveUtils listener
+  // and get rid of this enableWhen event all together.
+
+  // Save the interfaceType in our local mapState
+  mapState.interfaceType = event?.appState?.interfaceType || 'mouse'
+  if (mapState.interfaceType !== 'touch') {
+    return false
+  }
+  return enableGetInfoButton
+}
+
 const pluginConfig = {
   manifest: {
     buttons: [{
       id: 'selectAtTarget',
-      label: terms.labels.getInfo,
-      enableWhen: (event) => {
-        // IM-526 Once the im provides an api that returns the interfaceType
-        // or emits an event when the interfaceType changes, we can use that in the reactiveUtils listener
-        // and get rid of this enableWhen event all together.
-
-        // Save the interfaceType in our local mapState
-        mapState.interfaceType = event?.appState?.interfaceType || 'mouse'
-        if (mapState.interfaceType !== 'touch') {
-          return false
-        }
-        return enableGetInfoButton
-      }
+      label: terms.labels.getInfo
     }]
   },
 
@@ -48,35 +49,11 @@ const initiateTriggerHitTest = (interactiveMap) => async () => {
 
   interactiveMap.toggleButtonState('selectAtTarget', 'disabled', enableGetInfoButton)
 }
+
 export const interactPlugin = () => {
-  const _interactPlugin = createInteractPlugin({
-    manifest: {
-      buttons: [{
-        id: 'selectAtTarget',
-        label: terms.labels.getInfo,
-        enableWhen: (event) => {
-        // IM-526 Once the im provides an api that returns the interfaceType
-        // or emits an event when the interfaceType changes, we can use that in the reactiveUtils listener
-        // and get rid of this enableWhen event all together.
-
-          // Save the interfaceType in our local mapState
-          mapState.interfaceType = event?.appState?.interfaceType || 'mouse'
-          if (mapState.interfaceType !== 'touch') {
-            return false
-          }
-          return enableGetInfoButton
-        }
-      }]
-    },
-
-    marker: {
-      id: INFO_PANEL_MARKER_ID,
-      symbol: 'pin',
-      backgroundColor: { outdoor: '#0b0c0c', dark: '#ffffff' },
-      foregroundColor: { outdoor: '#ffffff', dark: '#0b0c0c' }
-    },
-    interactionModes: ['placeMarker'], // e.g. ['selectMarker'], ['selectFeature'], ['placeMarker'], or combinations
-  })
+  const options = { ...pluginConfig }
+  options.manifest.buttons[0].enableWhen = enableWhen
+  const _interactPlugin = createInteractPlugin(options)
 
   const bindShowInfoPanel = (interactiveMap) => async (coords) => {
     const attributes = mapState.cursorAttributes

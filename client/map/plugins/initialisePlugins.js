@@ -12,16 +12,22 @@ export const plugins = {}
 const pluginValues = {}
 const pluginArray = []
 
-export const getPlugins = () => pluginArray
-
 export const updatePlugin = (pluginName, overrides) => {
   if (pluginValues[pluginName]) {
-    Object.assign(pluginValues[pluginName], overrides, { load: pluginValues[pluginName].load })
+    Object.assign(pluginValues[pluginName], { ...pluginValues[pluginName] }, overrides)
   }
 }
 
 export const getPluginValues = (pluginName) => {
-  return pluginName ? (pluginValues[pluginName] || null) : pluginValues
+  if (!pluginName) {
+    return structuredClone(pluginValues)
+  }
+
+  if (!pluginValues[pluginName]) {
+    return null
+  }
+
+  return structuredClone(pluginValues[pluginName])
 }
 
 export const initialisePlugins = (defraMapConfig) => {
