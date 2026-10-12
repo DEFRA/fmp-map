@@ -93,8 +93,20 @@ describe('drawPlugin / framePlugin', () => {
     document.body.innerHTML = '<div id="map"></div>'
   })
 
+  it('should return the shared plugin configs from initialiseDrawPlugin/initialiseFramePlugin', () => {
+    const { initialiseDrawPlugin, initialiseFramePlugin } = loadDrawPlugin()
+
+    const drawConfig = initialiseDrawPlugin()
+    const frameConfig = initialiseFramePlugin()
+
+    expect(drawConfig.menuItems.addPolygon).toEqual(expect.objectContaining({ iconSvgContent: expect.any(String) }))
+    expect(frameConfig).toEqual({})
+  })
+
   it('should build the draw and frame plugins from the draw-es and frame factories', () => {
-    loadDrawPlugin()
+    const { drawAndFramePlugin } = loadDrawPlugin()
+
+    drawAndFramePlugin()
 
     expect(mockCreateDrawPlugin).toHaveBeenCalledWith()
     expect(mockCreateFramePlugin).toHaveBeenCalledWith()
@@ -102,7 +114,8 @@ describe('drawPlugin / framePlugin', () => {
 
   describe('toggleKeyWhenEditing', () => {
     it('should hide the search/map-key buttons and mark the map as editing', () => {
-      const { drawPlugin } = loadDrawPlugin()
+      const { drawAndFramePlugin } = loadDrawPlugin()
+      const { drawPlugin } = drawAndFramePlugin()
       const mapElement = document.getElementById('map')
       drawPlugin.plugins = {
         search: { hideButton: jest.fn(), showButton: jest.fn() },
@@ -118,7 +131,8 @@ describe('drawPlugin / framePlugin', () => {
     })
 
     it('should show the search/map-key buttons and unmark the map when no longer editing', () => {
-      const { drawPlugin } = loadDrawPlugin()
+      const { drawAndFramePlugin } = loadDrawPlugin()
+      const { drawPlugin } = drawAndFramePlugin()
       const mapElement = document.getElementById('map')
       mapElement.classList.add('draw-editing')
       drawPlugin.plugins = {
@@ -140,7 +154,8 @@ describe('drawPlugin / framePlugin', () => {
     let interactiveMap
 
     beforeEach(() => {
-      ;({ drawPlugin } = loadDrawPlugin())
+      const { drawAndFramePlugin } = loadDrawPlugin()
+      ;({ drawPlugin } = drawAndFramePlugin())
       interactiveMap = buildInteractiveMap()
       drawPlugin.plugins = {
         search: { hideButton: jest.fn(), showButton: jest.fn() },
@@ -190,10 +205,12 @@ describe('drawPlugin / framePlugin', () => {
 
   describe('attach', () => {
     let drawPlugin
+    let framePlugin
     let interactiveMap
 
     beforeEach(() => {
-      ;({ drawPlugin } = loadDrawPlugin())
+      const { drawAndFramePlugin } = loadDrawPlugin()
+      ;({ drawPlugin, framePlugin } = drawAndFramePlugin())
       interactiveMap = buildInteractiveMap()
       drawPlugin.plugins = {
         search: { hideButton: jest.fn(), showButton: jest.fn() },
@@ -205,8 +222,8 @@ describe('drawPlugin / framePlugin', () => {
       drawPlugin.newPolygon = jest.fn()
       drawPlugin.deleteFeature = jest.fn()
       drawPlugin.editFeature = jest.fn()
-      mockFramePluginInstance.addFrame = jest.fn()
-      mockFramePluginInstance.editFeature = jest.fn()
+      framePlugin.addFrame = jest.fn()
+      framePlugin.editFeature = jest.fn()
 
       drawPlugin.attach(interactiveMap)
     })
@@ -285,7 +302,7 @@ describe('drawPlugin / framePlugin', () => {
 
       addSquareItem.onClick()
 
-      expect(mockFramePluginInstance.addFrame).toHaveBeenCalledWith('boundary', { aspectRatio: 1 })
+      expect(framePlugin.addFrame).toHaveBeenCalledWith('boundary', { aspectRatio: 1 })
       expect(mockSiteBoundary.state).toBe('editing')
       expect(mockSiteBoundary.type).toBe('square')
     })
@@ -322,7 +339,7 @@ describe('drawPlugin / framePlugin', () => {
       editShapeItem.onClick()
 
       expect(drawPlugin.deleteFeature).toHaveBeenCalledWith('boundary')
-      expect(mockFramePluginInstance.editFeature).toHaveBeenCalledWith(mockSiteBoundary.feature)
+      expect(framePlugin.editFeature).toHaveBeenCalledWith(mockSiteBoundary.feature)
     })
 
     it('should delete the feature and clear the site boundary when deleteShape is clicked', () => {
@@ -442,7 +459,8 @@ describe('drawPlugin / framePlugin', () => {
 
   describe('attach when onEditPolygon is not defined', () => {
     it('should update the draw state without calling onEditPolygon', () => {
-      const { drawPlugin } = loadDrawPlugin()
+      const { drawAndFramePlugin } = loadDrawPlugin()
+      const { drawPlugin } = drawAndFramePlugin()
       const interactiveMap = buildInteractiveMap()
       // Simulate onEditPolygon not being set up yet when attach() runs
       drawPlugin.onEditPolygon = undefined
