@@ -21,7 +21,7 @@ const buildInteractiveMap = () => {
 const loadSearchPlugin = () => {
   jest.resetModules()
   mockCreateSearchPlugin.mockReturnValue({})
-  return require('./search.js').searchPlugin
+  return require('./search.js')
 }
 
 describe('searchPlugin', () => {
@@ -29,8 +29,23 @@ describe('searchPlugin', () => {
     document.body.innerHTML = ''
   })
 
+  it('should return the shared plugin config from initialiseSearchPlugin', () => {
+    const { initialiseSearchPlugin } = loadSearchPlugin()
+
+    const config = initialiseSearchPlugin()
+
+    expect(config).toEqual(expect.objectContaining({
+      placeholder: 'Search for a place in England',
+      regions: ['england'],
+      width: '300px',
+      showMarker: false
+    }))
+    expect(config.osNamesURL).toContain('https://api.os.uk/search/names/v1/find')
+  })
+
   it('should build the plugin with the OS names search, transformRequest and england region', () => {
-    loadSearchPlugin()
+    const { searchPlugin } = loadSearchPlugin()
+    searchPlugin()
 
     expect(mockCreateSearchPlugin).toHaveBeenCalledWith(expect.objectContaining({
       placeholder: 'Search for a place in England',
@@ -47,7 +62,8 @@ describe('searchPlugin', () => {
   })
 
   it('should add a single search button', () => {
-    loadSearchPlugin()
+    const { searchPlugin } = loadSearchPlugin()
+    searchPlugin()
 
     const config = mockCreateSearchPlugin.mock.calls[0][0]
     expect(config.manifest.buttons).toEqual([expect.objectContaining({ id: 'search' })])
@@ -59,73 +75,81 @@ describe('searchPlugin', () => {
     })
 
     it('should hide the search button', () => {
-      const searchPlugin = loadSearchPlugin()
+      const { searchPlugin } = loadSearchPlugin()
+      const plugin = searchPlugin()
 
-      searchPlugin.hideButton()
+      plugin.hideButton()
 
       expect(document.getElementById('map-search').style.display).toBe('none')
     })
 
     it('should show the search button', () => {
-      const searchPlugin = loadSearchPlugin()
+      const { searchPlugin } = loadSearchPlugin()
+      const plugin = searchPlugin()
 
-      searchPlugin.showButton()
+      plugin.showButton()
 
       expect(document.getElementById('map-search').style.display).toBe('flex')
     })
 
     it('should not throw when the button is not present', () => {
       document.body.innerHTML = ''
-      const searchPlugin = loadSearchPlugin()
+      const { searchPlugin } = loadSearchPlugin()
+      const plugin = searchPlugin()
 
-      expect(() => searchPlugin.hideButton()).not.toThrow()
-      expect(() => searchPlugin.showButton()).not.toThrow()
+      expect(() => plugin.hideButton()).not.toThrow()
+      expect(() => plugin.showButton()).not.toThrow()
     })
   })
 
   describe('onOpen / onClosed', () => {
     it('should hide the info panel marker when search opens', () => {
-      const searchPlugin = loadSearchPlugin()
-      searchPlugin.plugins = { interact: { hideInfoPanelMarker: jest.fn(), hideInfoPanel: jest.fn() } }
+      const { searchPlugin } = loadSearchPlugin()
+      const plugin = searchPlugin()
+      plugin.plugins = { interact: { hideInfoPanelMarker: jest.fn(), hideInfoPanel: jest.fn() } }
 
-      searchPlugin.onOpen()
+      plugin.onOpen()
 
-      expect(searchPlugin.plugins.interact.hideInfoPanelMarker).toHaveBeenCalled()
+      expect(plugin.plugins.interact.hideInfoPanelMarker).toHaveBeenCalled()
     })
 
     it('should hide the info panel when search closes', () => {
-      const searchPlugin = loadSearchPlugin()
-      searchPlugin.plugins = { interact: { hideInfoPanelMarker: jest.fn(), hideInfoPanel: jest.fn() } }
+      const { searchPlugin } = loadSearchPlugin()
+      const plugin = searchPlugin()
+      plugin.plugins = { interact: { hideInfoPanelMarker: jest.fn(), hideInfoPanel: jest.fn() } }
 
-      searchPlugin.onClosed()
+      plugin.onClosed()
 
-      expect(searchPlugin.plugins.interact.hideInfoPanel).toHaveBeenCalled()
+      expect(plugin.plugins.interact.hideInfoPanel).toHaveBeenCalled()
     })
 
     it('should not throw when there are no plugins attached yet', () => {
-      const searchPlugin = loadSearchPlugin()
+      const { searchPlugin } = loadSearchPlugin()
+      const plugin = searchPlugin()
 
-      expect(() => searchPlugin.onOpen()).not.toThrow()
-      expect(() => searchPlugin.onClosed()).not.toThrow()
+      expect(() => plugin.onOpen()).not.toThrow()
+      expect(() => plugin.onClosed()).not.toThrow()
     })
   })
 
   describe('attach', () => {
     it('should register handlers for search:open, search:close and search:match', () => {
-      const searchPlugin = loadSearchPlugin()
+      const { searchPlugin } = loadSearchPlugin()
+      const plugin = searchPlugin()
       const interactiveMap = buildInteractiveMap()
 
-      searchPlugin.attach(interactiveMap)
+      plugin.attach(interactiveMap)
 
-      expect(interactiveMap.on).toHaveBeenCalledWith('search:open', searchPlugin.onOpen)
-      expect(interactiveMap.on).toHaveBeenCalledWith('search:close', searchPlugin.onClosed)
+      expect(interactiveMap.on).toHaveBeenCalledWith('search:open', plugin.onOpen)
+      expect(interactiveMap.on).toHaveBeenCalledWith('search:close', plugin.onClosed)
       expect(interactiveMap.on).toHaveBeenCalledWith('search:match', expect.any(Function))
     })
 
     it('should add a labelled marker styled with the literal search pin colours on search:match', () => {
-      const searchPlugin = loadSearchPlugin()
+      const { searchPlugin } = loadSearchPlugin()
+      const plugin = searchPlugin()
       const interactiveMap = buildInteractiveMap()
-      searchPlugin.attach(interactiveMap)
+      plugin.attach(interactiveMap)
 
       interactiveMap.trigger('search:match', { point: [1, 2], text: 'Bristol' })
 

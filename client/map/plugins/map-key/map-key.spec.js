@@ -21,7 +21,7 @@ const loadMapKeyPlugin = () => {
     addSymbol: jest.fn(),
     removeSymbol: jest.fn()
   })
-  return require('./map-key.js').mapKeyPlugin
+  return require('./map-key.js')
 }
 
 describe('mapKeyPlugin', () => {
@@ -31,8 +31,22 @@ describe('mapKeyPlugin', () => {
     mockMapState.interactiveMap = null
   })
 
+  it('should return the shared plugin config from initialiseMapKeyPlugin', () => {
+    const { initialiseMapKeyPlugin } = loadMapKeyPlugin()
+
+    const config = initialiseMapKeyPlugin()
+
+    expect(config.groups['surface-water-depth-in-millimetres']).toEqual({
+      groupLabel: 'Surface water depth in millimetres',
+      groupStyle: 'horizontal-ramp'
+    })
+    expect(config.manifest.panels[0].id).toBe('mapKey')
+    expect(config.manifest.buttons[0].id).toBe('mapKey')
+  })
+
   it('should build the plugin with a horizontal-ramp surface water depth group and a mapKey panel/button', () => {
-    loadMapKeyPlugin()
+    const { mapKeyPlugin } = loadMapKeyPlugin()
+    mapKeyPlugin()
 
     const config = mockCreateMapKeyPlugin.mock.calls[0][0]
     expect(config.groups['surface-water-depth-in-millimetres']).toEqual({
@@ -49,36 +63,40 @@ describe('mapKeyPlugin', () => {
     })
 
     it('should hide the map key button', () => {
-      const mapKeyPlugin = loadMapKeyPlugin()
+      const { mapKeyPlugin } = loadMapKeyPlugin()
+      const plugin = mapKeyPlugin()
 
-      mapKeyPlugin.hideButton()
+      plugin.hideButton()
 
       expect(document.getElementById('map-map-key').style.display).toBe('none')
     })
 
     it('should show the map key button', () => {
-      const mapKeyPlugin = loadMapKeyPlugin()
+      const { mapKeyPlugin } = loadMapKeyPlugin()
+      const plugin = mapKeyPlugin()
 
-      mapKeyPlugin.showButton()
+      plugin.showButton()
 
       expect(document.getElementById('map-map-key').style.display).toBe('flex')
     })
 
     it('should not throw when the button is not present', () => {
       document.body.innerHTML = ''
-      const mapKeyPlugin = loadMapKeyPlugin()
+      const { mapKeyPlugin } = loadMapKeyPlugin()
+      const plugin = mapKeyPlugin()
 
-      expect(() => mapKeyPlugin.hideButton()).not.toThrow()
-      expect(() => mapKeyPlugin.showButton()).not.toThrow()
+      expect(() => plugin.hideButton()).not.toThrow()
+      expect(() => plugin.showButton()).not.toThrow()
     })
   })
 
   describe('hidePanel / reShowPanel', () => {
     it('should warn and do nothing when there is no interactiveMap instance', () => {
-      const mapKeyPlugin = loadMapKeyPlugin()
+      const { mapKeyPlugin } = loadMapKeyPlugin()
+      const plugin = mapKeyPlugin()
       jest.spyOn(console, 'warn').mockImplementation(() => {})
 
-      mapKeyPlugin.hidePanel('id-1')
+      plugin.hidePanel('id-1')
 
       expect(console.warn).toHaveBeenCalled()
     })
@@ -88,21 +106,23 @@ describe('mapKeyPlugin', () => {
       keyPanel.id = 'map-panel-map-key'
       keyPanel.checkVisibility = () => true
       document.body.appendChild(keyPanel)
-      const mapKeyPlugin = loadMapKeyPlugin()
+      const { mapKeyPlugin } = loadMapKeyPlugin()
+      const plugin = mapKeyPlugin()
       const hidePanel = jest.fn()
       mockMapState.interactiveMap = { hidePanel, showPanel: jest.fn() }
 
-      mapKeyPlugin.hidePanel('id-1')
+      plugin.hidePanel('id-1')
 
       expect(hidePanel).toHaveBeenCalledWith('mapKey')
     })
 
     it('should not hide the mapKey panel when it is not currently visible', () => {
-      const mapKeyPlugin = loadMapKeyPlugin()
+      const { mapKeyPlugin } = loadMapKeyPlugin()
+      const plugin = mapKeyPlugin()
       const hidePanel = jest.fn()
       mockMapState.interactiveMap = { hidePanel, showPanel: jest.fn() }
 
-      mapKeyPlugin.hidePanel('id-1')
+      plugin.hidePanel('id-1')
 
       expect(hidePanel).not.toHaveBeenCalled()
     })
@@ -112,12 +132,13 @@ describe('mapKeyPlugin', () => {
       keyPanel.id = 'map-panel-map-key'
       keyPanel.checkVisibility = () => true
       document.body.appendChild(keyPanel)
-      const mapKeyPlugin = loadMapKeyPlugin()
+      const { mapKeyPlugin } = loadMapKeyPlugin()
+      const plugin = mapKeyPlugin()
       const showPanel = jest.fn()
       mockMapState.interactiveMap = { hidePanel: jest.fn(), showPanel }
-      mapKeyPlugin.hidePanel('id-1')
+      plugin.hidePanel('id-1')
 
-      mapKeyPlugin.reShowPanel('id-1')
+      plugin.reShowPanel('id-1')
 
       expect(showPanel).toHaveBeenCalledWith('mapKey')
     })
@@ -127,26 +148,28 @@ describe('mapKeyPlugin', () => {
       keyPanel.id = 'map-panel-map-key'
       keyPanel.checkVisibility = () => true
       document.body.appendChild(keyPanel)
-      const mapKeyPlugin = loadMapKeyPlugin()
+      const { mapKeyPlugin } = loadMapKeyPlugin()
+      const plugin = mapKeyPlugin()
       const showPanel = jest.fn()
       mockMapState.interactiveMap = { hidePanel: jest.fn(), showPanel }
-      mapKeyPlugin.hidePanel('id-1')
-      mapKeyPlugin.hidePanel('id-2')
+      plugin.hidePanel('id-1')
+      plugin.hidePanel('id-2')
 
-      mapKeyPlugin.reShowPanel('id-1')
+      plugin.reShowPanel('id-1')
 
       expect(showPanel).not.toHaveBeenCalled()
 
-      mapKeyPlugin.reShowPanel('id-2')
+      plugin.reShowPanel('id-2')
       expect(showPanel).toHaveBeenCalledWith('mapKey')
     })
 
     it('should do nothing when re-showing an id that never hid the panel', () => {
-      const mapKeyPlugin = loadMapKeyPlugin()
+      const { mapKeyPlugin } = loadMapKeyPlugin()
+      const plugin = mapKeyPlugin()
       const showPanel = jest.fn()
       mockMapState.interactiveMap = { hidePanel: jest.fn(), showPanel }
 
-      mapKeyPlugin.reShowPanel('never-hidden')
+      plugin.reShowPanel('never-hidden')
 
       expect(showPanel).not.toHaveBeenCalled()
     })
@@ -154,36 +177,50 @@ describe('mapKeyPlugin', () => {
 
   describe('attach', () => {
     it('should update the site boundary key symbol when the map key becomes ready', () => {
-      const mapKeyPlugin = loadMapKeyPlugin()
+      const { mapKeyPlugin } = loadMapKeyPlugin()
+      const plugin = mapKeyPlugin()
       const handlers = {}
-      mapKeyPlugin.interactiveMap = { on: jest.fn((event, handler) => { handlers[event] = handler }) }
+      plugin.interactiveMap = { on: jest.fn((event, handler) => { handlers[event] = handler }) }
       mockSiteBoundary.feature = { id: 'boundary' }
 
-      mapKeyPlugin.attach()
+      plugin.attach()
       handlers['map-key:ready']()
 
-      expect(mapKeyPlugin.addSymbol).toHaveBeenCalledWith(expect.objectContaining({ id: 'site-boundary' }))
+      expect(plugin.addSymbol).toHaveBeenCalledWith(expect.objectContaining({ id: 'site-boundary' }))
     })
   })
 
   describe('siteBoundary.onSetFeature', () => {
     it('should add the site boundary key symbol when a feature is set', () => {
-      const mapKeyPlugin = loadMapKeyPlugin()
+      const { mapKeyPlugin } = loadMapKeyPlugin()
+      const plugin = mapKeyPlugin()
 
       mockSiteBoundary.onSetFeature({ id: 'boundary' })
 
-      expect(mapKeyPlugin.addSymbol).toHaveBeenCalledWith(expect.objectContaining({
+      expect(plugin.addSymbol).toHaveBeenCalledWith(expect.objectContaining({
         id: 'site-boundary',
         label: 'Location boundary'
       }))
     })
 
     it('should remove the site boundary key symbol when the feature is cleared', () => {
-      const mapKeyPlugin = loadMapKeyPlugin()
+      const { mapKeyPlugin } = loadMapKeyPlugin()
+      const plugin = mapKeyPlugin()
 
       mockSiteBoundary.onSetFeature(null)
 
-      expect(mapKeyPlugin.removeSymbol).toHaveBeenCalledWith(expect.objectContaining({ id: 'site-boundary' }))
+      expect(plugin.removeSymbol).toHaveBeenCalledWith(expect.objectContaining({ id: 'site-boundary' }))
+    })
+
+    it('should not add the symbol again when the boundary is already added', () => {
+      const { mapKeyPlugin } = loadMapKeyPlugin()
+      const plugin = mapKeyPlugin()
+
+      mockSiteBoundary.onSetFeature({ id: 'boundary' })
+      plugin.addSymbol.mockClear()
+      mockSiteBoundary.onSetFeature({ id: 'boundary' })
+
+      expect(plugin.addSymbol).not.toHaveBeenCalled()
     })
   })
 })

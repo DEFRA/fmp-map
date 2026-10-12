@@ -4,7 +4,6 @@ export const menuConfig = [
   {
     id: 'dataset',
     label: terms.labels.datasets,
-    urlKey: 'dataset',
     visibleWhen: true,
     type: 'radio', // 'checkbox' or 'radio'
     value: 'floodzones', // this is the default value for the menu, it should be one of the items' id
@@ -17,8 +16,6 @@ export const menuConfig = [
   {
     id: 'timeframe',
     label: terms.labels.climateChange,
-    urlKey: 'dataset',
-    urlIndex: 1, // eg: surfacewater-presentday-high-depth or floodzones-climatechange
     type: 'radio',
     visibleWhen: { menu: { dataset: ['floodzones', 'surfacewater'] } },
     value: 'presentday',
@@ -30,8 +27,6 @@ export const menuConfig = [
   }, {
     id: 'aep',
     label: terms.labels.annualLikelihood,
-    urlKey: 'dataset',
-    urlIndex: 2,
     type: 'radio',
     visibleWhen: { menu: { dataset: ['surfacewater'] } },
     value: 'medium',
@@ -43,8 +38,6 @@ export const menuConfig = [
   }, {
     id: 'depth',
     label: terms.labels.depth,
-    urlKey: 'dataset',
-    urlIndex: 3,
     type: 'radio',
     visibleWhen: { menu: { dataset: ['surfacewater'] } },
     subMenu: true,
@@ -62,7 +55,6 @@ export const menuConfig = [
   }, {
     id: 'features',
     groupLabel: terms.labels.mapFeatures,
-    urlKey: 'features',
     type: 'checkbox',
     visibleWhen: true,
     items: [

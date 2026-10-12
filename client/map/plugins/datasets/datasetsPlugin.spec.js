@@ -39,7 +39,7 @@ jest.mock('../../interactive-map-helpers/mapState.js', () => ({
 
 const loadDatasetsPlugin = () => {
   jest.resetModules()
-  return require('./datasetsPlugin.js').initialiseDatasetsPlugin
+  return require('./datasetsPlugin.js')
 }
 
 describe('initialiseDatasetsPlugin', () => {
@@ -55,16 +55,15 @@ describe('initialiseDatasetsPlugin', () => {
   })
 
   it('should build datasets from flood zones, surface water and feature layers', () => {
-    const initialiseDatasetsPlugin = loadDatasetsPlugin()
+    const { initialiseDatasetsPlugin } = loadDatasetsPlugin()
 
-    initialiseDatasetsPlugin(config)
+    const pluginConfig = initialiseDatasetsPlugin(config)
 
     expect(mockFloodZonesDatasets).toHaveBeenCalledWith({ agolVectorTileUrl: config.agolVectorTileUrl, layerNameSuffix: config.layerNameSuffix })
     expect(mockSurfaceWaterDatasets).toHaveBeenCalledWith({ agolVectorTileUrl: config.agolVectorTileUrl, layerNameSuffix: config.layerNameSuffix })
     expect(mockFeatureLayers).toHaveBeenCalledWith(config.agolServiceUrl, config.layerNameSuffix)
 
-    const [{ datasets }] = mockCreateDatasetsPlugin.mock.calls[0]
-    expect(datasets).toEqual([
+    expect(pluginConfig.datasets).toEqual([
       { id: 'floodzones' },
       mockSurfaceWaterExtentsKey,
       { id: 'surfacewater' },
@@ -72,21 +71,53 @@ describe('initialiseDatasetsPlugin', () => {
     ])
   })
 
-  it('should create the plugin with the expected default configuration', () => {
-    const initialiseDatasetsPlugin = loadDatasetsPlugin()
+  it('should return the expected default configuration', () => {
+    const { initialiseDatasetsPlugin } = loadDatasetsPlugin()
 
-    initialiseDatasetsPlugin(config)
+    const pluginConfig = initialiseDatasetsPlugin(config)
 
-    expect(mockCreateDatasetsPlugin).toHaveBeenCalledWith(expect.objectContaining({
+    expect(pluginConfig).toEqual(expect.objectContaining({
       globals: { opacityMode: 'global', opacity: 0.75, visible: true },
       hasMenu: false
     }))
   })
+})
+
+describe('datasetsPlugin', () => {
+  const config = { agolServiceUrl: 'https://example.com/services', agolVectorTileUrl: 'https://example.com/vt', layerNameSuffix: '_NON_PRODUCTION' }
+
+  beforeEach(() => {
+    mockCreateDatasetsPlugin.mockReturnValue({})
+    mockFloodZonesDatasets.mockReturnValue([{ id: 'floodzones' }])
+    mockSurfaceWaterDatasets.mockReturnValue([{ id: 'surfacewater' }])
+    mockFeatureLayers.mockReturnValue([{ id: 'mainrivers' }])
+    mockMapState.interfaceType = null
+    mockMapState.view = { updating: false }
+  })
+
+  it('should create the plugin with the configured datasets', () => {
+    const { initialiseDatasetsPlugin, datasetsPlugin } = loadDatasetsPlugin()
+    initialiseDatasetsPlugin(config)
+
+    datasetsPlugin()
+
+    expect(mockCreateDatasetsPlugin).toHaveBeenCalledWith(expect.objectContaining({
+      globals: { opacityMode: 'global', opacity: 0.75, visible: true },
+      hasMenu: false,
+      datasets: [
+        { id: 'floodzones' },
+        mockSurfaceWaterExtentsKey,
+        { id: 'surfacewater' },
+        { id: 'mainrivers' }
+      ]
+    }))
+  })
 
   it('should start with ready set to false', () => {
-    const initialiseDatasetsPlugin = loadDatasetsPlugin()
+    const { initialiseDatasetsPlugin, datasetsPlugin } = loadDatasetsPlugin()
+    initialiseDatasetsPlugin(config)
 
-    const plugin = initialiseDatasetsPlugin(config)
+    const plugin = datasetsPlugin()
 
     expect(plugin.ready).toBe(false)
   })
@@ -99,25 +130,28 @@ describe('initialiseDatasetsPlugin', () => {
         { esriStyleLayerId: 'layer-2' } // no infoPanelData, should be skipped
       ]
     }])
-    const initialiseDatasetsPlugin = loadDatasetsPlugin()
-
+    const { initialiseDatasetsPlugin, datasetsPlugin } = loadDatasetsPlugin()
     initialiseDatasetsPlugin(config)
+
+    datasetsPlugin()
 
     expect(mockMapState.styleToValuesMap).toEqual({ 'layer-1': { ds: 'fz' } })
   })
 
   it('should not fail building the style map for datasets without sublayers', () => {
-    const initialiseDatasetsPlugin = loadDatasetsPlugin()
-
+    const { initialiseDatasetsPlugin, datasetsPlugin } = loadDatasetsPlugin()
     initialiseDatasetsPlugin(config)
+
+    datasetsPlugin()
 
     expect(mockMapState.styleToValuesMap).toEqual({})
   })
 
   describe('attach', () => {
     it('should store the interactive map and listen for datasets:ready', () => {
-      const initialiseDatasetsPlugin = loadDatasetsPlugin()
-      const plugin = initialiseDatasetsPlugin(config)
+      const { initialiseDatasetsPlugin, datasetsPlugin } = loadDatasetsPlugin()
+      initialiseDatasetsPlugin(config)
+      const plugin = datasetsPlugin()
       const interactiveMap = { on: jest.fn() }
 
       plugin.attach(interactiveMap)
@@ -127,8 +161,9 @@ describe('initialiseDatasetsPlugin', () => {
     })
 
     it('should mark the plugin ready and update visible layers/pointer move once datasets are ready', () => {
-      const initialiseDatasetsPlugin = loadDatasetsPlugin()
-      const plugin = initialiseDatasetsPlugin(config)
+      const { initialiseDatasetsPlugin, datasetsPlugin } = loadDatasetsPlugin()
+      initialiseDatasetsPlugin(config)
+      const plugin = datasetsPlugin()
       const interactiveMap = { on: jest.fn() }
       plugin.attach(interactiveMap)
 
@@ -142,8 +177,9 @@ describe('initialiseDatasetsPlugin', () => {
     })
 
     it('should trigger a hit test on touch devices once the view stops updating', () => {
-      const initialiseDatasetsPlugin = loadDatasetsPlugin()
-      const plugin = initialiseDatasetsPlugin(config)
+      const { initialiseDatasetsPlugin, datasetsPlugin } = loadDatasetsPlugin()
+      initialiseDatasetsPlugin(config)
+      const plugin = datasetsPlugin()
       plugin.plugins = { interact: { triggerHitTest: jest.fn() } }
       const interactiveMap = { on: jest.fn() }
       plugin.attach(interactiveMap)
@@ -159,8 +195,9 @@ describe('initialiseDatasetsPlugin', () => {
     })
 
     it('should not trigger a hit test for non-touch devices', () => {
-      const initialiseDatasetsPlugin = loadDatasetsPlugin()
-      const plugin = initialiseDatasetsPlugin(config)
+      const { initialiseDatasetsPlugin, datasetsPlugin } = loadDatasetsPlugin()
+      initialiseDatasetsPlugin(config)
+      const plugin = datasetsPlugin()
       plugin.plugins = { interact: { triggerHitTest: jest.fn() } }
       const interactiveMap = { on: jest.fn() }
       plugin.attach(interactiveMap)
@@ -175,8 +212,9 @@ describe('initialiseDatasetsPlugin', () => {
     })
 
     it('should evaluate the reactiveUtils condition against the view updating state', () => {
-      const initialiseDatasetsPlugin = loadDatasetsPlugin()
-      const plugin = initialiseDatasetsPlugin(config)
+      const { initialiseDatasetsPlugin, datasetsPlugin } = loadDatasetsPlugin()
+      initialiseDatasetsPlugin(config)
+      const plugin = datasetsPlugin()
       const interactiveMap = { on: jest.fn() }
       plugin.attach(interactiveMap)
       const onDatasetsReady = interactiveMap.on.mock.calls.find(([name]) => name === 'datasets:ready')[1]

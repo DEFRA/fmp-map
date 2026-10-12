@@ -7,12 +7,18 @@ const mockCreateScaleBarPlugin = mockInteractiveMapMocks.scaleBarPlugin.default
 const loadScaleBarPlugin = () => {
   jest.resetModules()
   mockCreateScaleBarPlugin.mockReturnValue({ pluginInstance: true })
-  return require('./scale-bar.js').scaleBarPlugin
+  return require('./scale-bar.js')
 }
 
 describe('scaleBarPlugin', () => {
+  it('should return the shared plugin config using metric units from initialiseScaleBarPlugin', () => {
+    const { initialiseScaleBarPlugin } = loadScaleBarPlugin()
+
+    expect(initialiseScaleBarPlugin()).toEqual({ units: 'metric' })
+  })
+
   it('should build the plugin using metric units', () => {
-    const scaleBarPlugin = loadScaleBarPlugin()
+    const { scaleBarPlugin } = loadScaleBarPlugin()
 
     scaleBarPlugin()
 
@@ -20,7 +26,7 @@ describe('scaleBarPlugin', () => {
   })
 
   it('should return the plugin instance built by createScaleBarPlugin', () => {
-    const scaleBarPlugin = loadScaleBarPlugin()
+    const { scaleBarPlugin } = loadScaleBarPlugin()
 
     const result = scaleBarPlugin()
 

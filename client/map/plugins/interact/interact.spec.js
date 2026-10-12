@@ -71,7 +71,8 @@ describe('interactPlugin', () => {
     const getEnableWhen = () => mockCreateInteractPlugin.mock.calls[0][0].manifest.buttons[0].enableWhen
 
     it('should save the interfaceType and disable the button for a mouse interface', () => {
-      loadInteract()
+      const { interactPlugin } = loadInteract()
+      interactPlugin()
       const enableWhen = getEnableWhen()
 
       const result = enableWhen({ appState: { interfaceType: 'mouse' } })
@@ -81,7 +82,8 @@ describe('interactPlugin', () => {
     })
 
     it('should default to a mouse interface when there is no event', () => {
-      loadInteract()
+      const { interactPlugin } = loadInteract()
+      interactPlugin()
       const enableWhen = getEnableWhen()
 
       const result = enableWhen(undefined)
@@ -91,7 +93,8 @@ describe('interactPlugin', () => {
     })
 
     it('should enable the button on a touch interface only once a feature has been hit', async () => {
-      const { interactPlugin } = loadInteract()
+      const { interactPlugin: createPlugin } = loadInteract()
+      const interactPlugin = createPlugin()
       const interactiveMap = buildInteractiveMap()
       interactPlugin.attach(interactiveMap)
       const enableWhen = getEnableWhen()
@@ -105,9 +108,21 @@ describe('interactPlugin', () => {
     })
   })
 
+  describe('initialiseInteractPlugin', () => {
+    it('should return the shared plugin config', () => {
+      const { initialiseInteractPlugin } = loadInteract()
+
+      const config = initialiseInteractPlugin()
+
+      expect(config.manifest.buttons[0].id).toBe('selectAtTarget')
+      expect(config.marker.id).toBe('infoPanelMarker')
+    })
+  })
+
   describe('triggerHitTest', () => {
     it('should hit test the current view centre and toggle the selectAtTarget button state', async () => {
-      const { interactPlugin } = loadInteract()
+      const { interactPlugin: createPlugin } = loadInteract()
+      const interactPlugin = createPlugin()
       const interactiveMap = buildInteractiveMap()
       interactPlugin.attach(interactiveMap)
       mockMapState.visibleLayers = ['layer-1']
@@ -121,7 +136,8 @@ describe('interactPlugin', () => {
     })
 
     it('should toggle selectAtTarget disabled state to false when nothing is under the cursor', async () => {
-      const { interactPlugin } = loadInteract()
+      const { interactPlugin: createPlugin } = loadInteract()
+      const interactPlugin = createPlugin()
       const interactiveMap = buildInteractiveMap()
       interactPlugin.attach(interactiveMap)
       mockMapState.cursorStyleLayer = null
@@ -132,7 +148,8 @@ describe('interactPlugin', () => {
     })
 
     it('should toggle selectAtTarget disabled state to true when a feature is under the cursor', async () => {
-      const { interactPlugin } = loadInteract()
+      const { interactPlugin: createPlugin } = loadInteract()
+      const interactPlugin = createPlugin()
       const interactiveMap = buildInteractiveMap()
       interactPlugin.attach(interactiveMap)
       mockMapState.cursorStyleLayer = 'layer-1'
@@ -148,7 +165,8 @@ describe('interactPlugin', () => {
     let interactiveMap
 
     beforeEach(() => {
-      ;({ interactPlugin } = loadInteract())
+      const { interactPlugin: createPlugin } = loadInteract()
+      interactPlugin = createPlugin()
       interactiveMap = buildInteractiveMap()
       interactPlugin.attach(interactiveMap)
     })

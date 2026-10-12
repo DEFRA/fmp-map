@@ -1,27 +1,60 @@
-import { scaleBarPlugin } from './scale-bar/scale-bar.js'
-import { searchPlugin } from './search/search.js'
-import { mapKeyPlugin } from './map-key/map-key.js'
-import { menuPlugin } from './menu/menu.js'
-import { interactPlugin } from './interact/interact.js'
-import { mapStylePlugin } from './map-styles/map-styles.js'
-import { initialiseDatasetsPlugin } from './datasets/datasetsPlugin.js'
-import { opacitySliderPlugin } from './opacity-slider/opacity-slider.js'
-import { drawPlugin, framePlugin } from './draw/drawPlugin.js'
+import { datasetsPlugin, initialiseDatasetsPlugin } from './datasets/datasetsPlugin.js'
+import { opacitySliderPlugin, initialiseOpacitySliderPlugin } from './opacity-slider/opacity-slider.js'
+import { mapKeyPlugin, initialiseMapKeyPlugin } from './map-key/map-key.js'
+import { menuPlugin, initialiseMenuPlugin } from './menu/menu.js'
+import { mapStylePlugin, initialiseMapStylePlugin } from './map-styles/map-styles.js'
+import { scaleBarPlugin, initialiseScaleBarPlugin } from './scale-bar/scale-bar.js'
+import { searchPlugin, initialiseSearchPlugin } from './search/search.js'
+import { drawAndFramePlugin, initialiseDrawPlugin, initialiseFramePlugin } from './draw/drawPlugin.js'
+import { interactPlugin, initialiseInteractPlugin } from './interact/interact.js'
 
 export const plugins = {}
+const pluginValues = {}
 const pluginArray = []
 
+export const updatePlugin = (pluginName, overrides) => {
+  if (pluginValues[pluginName]) {
+    Object.assign(pluginValues[pluginName], { ...pluginValues[pluginName] }, overrides)
+  }
+}
+
+export const getPluginValues = (pluginName) => {
+  if (!pluginName) {
+    return structuredClone(pluginValues)
+  }
+
+  if (!pluginValues[pluginName]) {
+    return null
+  }
+
+  return structuredClone(pluginValues[pluginName])
+}
+
 export const initialisePlugins = (defraMapConfig) => {
-  plugins.datasets = initialiseDatasetsPlugin(defraMapConfig)
+  pluginValues.datasets = initialiseDatasetsPlugin(defraMapConfig)
+  pluginValues.opacitySlider = initialiseOpacitySliderPlugin()
+  pluginValues.mapKey = initialiseMapKeyPlugin()
+  pluginValues.menu = initialiseMenuPlugin()
+  pluginValues.mapStyle = initialiseMapStylePlugin(defraMapConfig.OS_ACCOUNT_NUMBER)
+  pluginValues.scaleBar = initialiseScaleBarPlugin()
+  pluginValues.search = initialiseSearchPlugin()
+  pluginValues.draw = initialiseDrawPlugin()
+  pluginValues.frame = initialiseFramePlugin()
+  pluginValues.interact = initialiseInteractPlugin()
+}
+
+export const createPlugins = () => {
+  plugins.datasets = datasetsPlugin()
   plugins.opacitySlider = opacitySliderPlugin(plugins.datasets)
-  plugins.mapKey = mapKeyPlugin
-  plugins.menu = menuPlugin
-  plugins.mapStyle = mapStylePlugin(defraMapConfig.OS_ACCOUNT_NUMBER)
+  plugins.mapKey = mapKeyPlugin()
+  plugins.menu = menuPlugin()
+  plugins.mapStyle = mapStylePlugin()
   plugins.scaleBar = scaleBarPlugin()
-  plugins.search = searchPlugin
+  plugins.search = searchPlugin()
+  const { drawPlugin, framePlugin } = drawAndFramePlugin()
   plugins.draw = drawPlugin
   plugins.frame = framePlugin
-  plugins.interact = interactPlugin
+  plugins.interact = interactPlugin()
 
   pluginArray.push(
     plugins.datasets,
