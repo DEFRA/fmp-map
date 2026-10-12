@@ -1,7 +1,7 @@
 import createMenuPlugin from '@defra/interactive-map/plugins/menu'
 import { menuConfig } from './menuConfig.js'
 
-export const menuPlugin = createMenuPlugin({
+const pluginConfig = {
   manifest: {
     panels: [{
       id: 'menu',
@@ -15,4 +15,8 @@ export const menuPlugin = createMenuPlugin({
     }]
   },
   menu: menuConfig
-})
+}
+
+export const initialiseMenuPlugin = () => pluginConfig
+
+export const menuPlugin = () => createMenuPlugin(pluginConfig)

@@ -5,6 +5,25 @@ import { floodZonesDatasets } from './floodZones.js'
 import { featureLayers } from './featureLayers.js'
 import { mapState } from '../../interactive-map-helpers/mapState.js'
 
+const pluginConfig = {
+  globals: {
+    opacityMode: 'global',
+    opacity: 0.75,
+    visible: true
+  },
+  hasMenu: false
+}
+
+export const initialiseDatasetsPlugin = ({ agolServiceUrl, agolVectorTileUrl, layerNameSuffix }) => {
+  pluginConfig.datasets = [
+    ...floodZonesDatasets({ agolVectorTileUrl, layerNameSuffix }),
+    surfaceWaterExtentsKey,
+    ...surfaceWaterDatasets({ agolVectorTileUrl, layerNameSuffix }),
+    ...featureLayers(agolServiceUrl, layerNameSuffix),
+  ]
+  return pluginConfig
+}
+
 const esriStyleLayerIdToInfoPanelReducer = (datasets) => {
   return datasets.reduce((styleToValuesMap, dataset) => {
     if (dataset.sublayers) {
@@ -18,30 +37,16 @@ const esriStyleLayerIdToInfoPanelReducer = (datasets) => {
   }, {})
 }
 
-export const initialiseDatasetsPlugin = ({ agolServiceUrl, agolVectorTileUrl, layerNameSuffix }) => {
-  const datasets = [
-    ...floodZonesDatasets({ agolVectorTileUrl, layerNameSuffix }),
-    surfaceWaterExtentsKey,
-    ...surfaceWaterDatasets({ agolVectorTileUrl, layerNameSuffix }),
-    ...featureLayers(agolServiceUrl, layerNameSuffix),
-  ]
-  mapState.styleToValuesMap = esriStyleLayerIdToInfoPanelReducer(datasets)
-  const datasetsPlugin = createDatasetsPlugin({
-    globals: {
-      opacityMode: 'global',
-      opacity: 0.75,
-      visible: true
-    },
-    hasMenu: false,
-    datasets
-  })
-  datasetsPlugin.ready = false
+export const datasetsPlugin = () => {
+  mapState.styleToValuesMap = esriStyleLayerIdToInfoPanelReducer(pluginConfig.datasets)
+  const plugin = createDatasetsPlugin(pluginConfig)
+  plugin.ready = false
 
-  datasetsPlugin.attach = (interactiveMap) => {
-    datasetsPlugin.interactiveMap = interactiveMap
+  plugin.attach = (interactiveMap) => {
+    plugin.interactiveMap = interactiveMap
 
     interactiveMap.on('datasets:ready', function () {
-      datasetsPlugin.ready = true
+      plugin.ready = true
       mapState.updateVisibleLayers()
       mapState.initPointerMove()
       reactiveUtils.when(
@@ -49,11 +54,11 @@ export const initialiseDatasetsPlugin = ({ agolServiceUrl, agolVectorTileUrl, la
         () => {
         // Update the enabled state of the infoPanel button when the map is moved on a touch device
           if (mapState.interfaceType === 'touch') {
-            datasetsPlugin.plugins.interact.triggerHitTest()
+            plugin.plugins.interact.triggerHitTest()
           }
         })
     })
   }
 
-  return datasetsPlugin
+  return plugin
 }
