@@ -211,5 +211,16 @@ describe('mapKeyPlugin', () => {
 
       expect(plugin.removeSymbol).toHaveBeenCalledWith(expect.objectContaining({ id: 'site-boundary' }))
     })
+
+    it('should not add the symbol again when the boundary is already added', () => {
+      const { mapKeyPlugin } = loadMapKeyPlugin()
+      const plugin = mapKeyPlugin()
+
+      mockSiteBoundary.onSetFeature({ id: 'boundary' })
+      plugin.addSymbol.mockClear()
+      mockSiteBoundary.onSetFeature({ id: 'boundary' })
+
+      expect(plugin.addSymbol).not.toHaveBeenCalled()
+    })
   })
 })
