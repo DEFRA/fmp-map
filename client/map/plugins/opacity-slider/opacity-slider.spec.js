@@ -4,9 +4,13 @@ jest.mock('./src/index.js', () => ({
   default: (...args) => mockCreateOpacitySliderPlugin(...args)
 }))
 
-const { opacitySliderPlugin } = require('./opacity-slider.js')
+const { initialiseOpacitySliderPlugin, opacitySliderPlugin } = require('./opacity-slider.js')
 
 describe('opacitySliderPlugin', () => {
+  it('should return the shared plugin config with the "Layer opacity" heading from initialiseOpacitySliderPlugin', () => {
+    expect(initialiseOpacitySliderPlugin()).toEqual({ heading: 'Layer opacity' })
+  })
+
   it('should build the plugin with the "Layer opacity" heading', () => {
     const datasetsPlugin = { setOpacity: jest.fn() }
 
