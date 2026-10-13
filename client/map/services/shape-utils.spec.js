@@ -8,7 +8,7 @@ const {
   checkParamsForPolygon,
   getExtents,
   getDimensions
-} = require('../../../server/services/shape-utils')
+} = require('./shape-utils.js')
 const zeroAreaPolygons = require('./__mocks__/zeroAreaPolygons')
 const { encode } = require('@mapbox/polyline')
 

@@ -1,4 +1,4 @@
-const { decodePolygon } = require('../shape-utils')
+const { decodePolygon } = require('./shape-utils')
 const { encode } = require('@mapbox/polyline')
 const polygons = require('./__data__/polygons.json')
 

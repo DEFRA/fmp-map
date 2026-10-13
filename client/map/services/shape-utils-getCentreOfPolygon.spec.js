@@ -1,4 +1,4 @@
-const { getCentreOfPolygon } = require('../shape-utils')
+const { getCentreOfPolygon } = require('./shape-utils')
 const getCentreOfPolygonData = require('./__data__/getCentreOfPolygonData.json')
 
 describe('getCentreOfPolygon', () => {

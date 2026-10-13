@@ -1,5 +1,5 @@
 import { getQueryParam, setQueryParam } from './queryParams.js'
-import { checkParamsForPolygon, encodePolygon } from '../../../server/services/shape-utils.js'
+import { checkParamsForPolygon, encodePolygon } from '../services/shape-utils.js'
 
 const WEST = 0
 const SOUTH = 1
