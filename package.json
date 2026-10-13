@@ -1,5 +1,22 @@
 {
-  "main": "index.js",
+  "name": "@defra/fmp-map",
+  "version": "0.0.1",
+  "license": "OGL-UK-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DEFRA/fmp-map.git"
+  },
+  "main": "client/map/fmpMap.js",
+  "exports": {
+    ".": "./client/map/fmpMap.js",
+    "./sass/*": "./client/sass/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "client/map",
+    "client/sass",
+    "!**/*.spec.js"
+  ],
   "scripts": {
     "lint": "eslint",
     "eslint": "eslint",
