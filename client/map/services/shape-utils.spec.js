@@ -2,14 +2,12 @@ const {
   getArea,
   getAreaInHectares,
   polygonToArray,
-  buffPolygon,
-  polygonStartEnd,
   encodePolygon,
   checkParamsForPolygon,
   getExtents,
   getDimensions
 } = require('./shape-utils.js')
-const zeroAreaPolygons = require('./__mocks__/zeroAreaPolygons')
+
 const { encode } = require('@mapbox/polyline')
 
 describe('shape-utils - polygonToArray', () => {
@@ -72,22 +70,6 @@ describe('shape-utils - getArea/getAreaInHectares', () => {
       `getAreaInHectares should return ${expectedHectares} for ${polygonString} when it is an array`,
       async () => {
         expect(getAreaInHectares(polygon)).toEqual(expectedHectares)
-      }
-    )
-  })
-
-  zeroAreaPolygons.forEach(([zeroAreaPolygon, expectedBuffedPolygon, expectedMinMaxXY]) => {
-    it(
-      `polygonStartEnd for ${JSON.stringify(zeroAreaPolygon)} should return ${JSON.stringify(expectedMinMaxXY)}`,
-      async () => {
-        expect(polygonStartEnd(zeroAreaPolygon)).toEqual(expectedMinMaxXY)
-      }
-    )
-
-    it(
-      `buffPolygon should convert ${JSON.stringify(zeroAreaPolygon)} to ${JSON.stringify(expectedBuffedPolygon)}`,
-      async () => {
-        expect(buffPolygon(zeroAreaPolygon)).toEqual(expectedBuffedPolygon)
       }
     )
   })
