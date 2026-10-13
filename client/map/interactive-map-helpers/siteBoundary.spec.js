@@ -1,4 +1,4 @@
-const { encodePolygon } = require('../../../server/services/shape-utils.js')
+const { encodePolygon } = require('../services/shape-utils.js')
 
 const setUrl = (url) => {
   window.history.replaceState({}, '', url)

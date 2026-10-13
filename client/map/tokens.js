@@ -1,6 +1,7 @@
-import { esriStatusCodes } from '../../server/constants'
 const osAuth = {}
 const esriAuth = {}
+const INVALID_TOKEN_CODE = 498
+
 export const getOsToken = async () => {
   // Check token is valid
   const isExpired = !Object.keys(osAuth).length || Date.now() >= osAuth?.expiresAt
@@ -108,4 +109,4 @@ const refreshEsriToken = async () => {
   _esriConfig.apiKey = token
 }
 
-export const isInvalidTokenError = (error) => (error?.details?.httpStatus === esriStatusCodes.INVALID_TOKEN_CODE)
+export const isInvalidTokenError = (error) => (error?.details?.httpStatus === INVALID_TOKEN_CODE)

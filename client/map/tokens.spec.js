@@ -1,5 +1,4 @@
-const { esriStatusCodes } = require('../../server/constants')
-
+const INVALID_TOKEN_CODE = 498
 const loadTokens = () => {
   jest.resetModules()
   return require('./tokens.js')
@@ -157,7 +156,7 @@ describe('setupEsriConfig', () => {
     const esriConfig = { apiKey: null, request: { interceptors: [] } }
     await setupEsriConfig(esriConfig)
 
-    const invalidTokenError = { details: { httpStatus: esriStatusCodes.INVALID_TOKEN_CODE } }
+    const invalidTokenError = { details: { httpStatus: INVALID_TOKEN_CODE } }
     await esriConfig.request.interceptors[1].error(invalidTokenError)
 
     // getEsriToken resolves to a plain token string, so destructuring { token } from it
@@ -220,7 +219,7 @@ describe('isInvalidTokenError', () => {
   it('should return true when the error has the invalid token status', () => {
     const { isInvalidTokenError } = loadTokens()
 
-    expect(isInvalidTokenError({ details: { httpStatus: esriStatusCodes.INVALID_TOKEN_CODE } })).toBe(true)
+    expect(isInvalidTokenError({ details: { httpStatus: INVALID_TOKEN_CODE } })).toBe(true)
   })
 
   it('should return false for any other status', () => {

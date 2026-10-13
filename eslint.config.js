@@ -7,7 +7,9 @@ module.exports = [
     env: ['jest', 'node'],
     ignores: [
       '**/_results_/',
-      '**/server/public/'
+      '**/server/public/',
+      'build/',
+      'coverage/'
     ]
   }),
   {
