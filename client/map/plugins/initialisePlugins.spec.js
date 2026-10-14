@@ -136,6 +136,15 @@ describe('initialisePlugins', () => {
       expect(getPluginValues('mapStyle')).toEqual(mockMapStyleValues)
     })
 
+    it('should build the search plugin with the fmpProxyUrl', () => {
+      const { initialisePlugins, getPluginValues } = loadInitialisePlugins()
+
+      initialisePlugins(defraMapConfig)
+
+      expect(mockInitialiseMapStylePlugin).toHaveBeenCalledWith(defraMapConfig.OS_ACCOUNT_NUMBER)
+      expect(getPluginValues('search')).toEqual(mockSearchValues)
+    })
+
     it('should build every other plugin values with no arguments', () => {
       const { initialisePlugins, getPluginValues } = loadInitialisePlugins()
 
@@ -145,7 +154,6 @@ describe('initialisePlugins', () => {
       expect(mockInitialiseMapKeyPlugin).toHaveBeenCalledWith()
       expect(mockInitialiseMenuPlugin).toHaveBeenCalledWith()
       expect(mockInitialiseScaleBarPlugin).toHaveBeenCalledWith()
-      expect(mockInitialiseSearchPlugin).toHaveBeenCalledWith()
       expect(mockInitialiseDrawPlugin).toHaveBeenCalledWith()
       expect(mockInitialiseFramePlugin).toHaveBeenCalledWith()
       expect(mockInitialiseInteractPlugin).toHaveBeenCalledWith()

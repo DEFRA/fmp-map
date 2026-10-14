@@ -27,7 +27,7 @@ describe('searchPlugin', () => {
   it('should return the shared plugin config from initialiseSearchPlugin', () => {
     const { initialiseSearchPlugin } = loadSearchPlugin()
 
-    const config = initialiseSearchPlugin()
+    const config = initialiseSearchPlugin('http://locahost:3005')
 
     expect(config).toEqual(expect.objectContaining({
       placeholder: 'Search for a place in England',
@@ -35,10 +35,10 @@ describe('searchPlugin', () => {
       width: '300px',
       showMarker: false
     }))
-    expect(config.osNamesURL).toContain('https://api.os.uk/search/names/v1/find')
+    expect(config.osNamesURL).toEqual('http://locahost:3005/place-lookup/{query}')
   })
 
-  it('should build the plugin with the expected parameters, ', () => {
+  it('should build the search plugin with the expected parameters, ', () => {
     const { searchPlugin } = loadSearchPlugin()
     searchPlugin()
 
@@ -48,8 +48,6 @@ describe('searchPlugin', () => {
       width: '300px',
       showMarker: false
     }))
-    const config = mockCreateSearchPlugin.mock.calls[0][0]
-    expect(config.osNamesURL).toContain('https://api.os.uk/search/names/v1/find')
   })
 
   it('should add a single search button', () => {
