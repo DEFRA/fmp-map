@@ -41,5 +41,6 @@ export class FmpMap extends InteractiveMap {
 FmpMap.getPluginValues = getPluginValues
 FmpMap.updatePlugin = updatePlugin
 FmpMap.createPlugins = createPlugins
+FmpMap.getDefraMapConfig = getDefraMapConfig
 
 globalThis.FmpMap = FmpMap
