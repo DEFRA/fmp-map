@@ -4,11 +4,6 @@ const mockInteractiveMapMocks = require('../../../__test-helpers__/interactiveMa
 jest.mock('@defra/interactive-map/plugins/search', () => mockInteractiveMapMocks.searchPlugin)
 const mockCreateSearchPlugin = mockInteractiveMapMocks.searchPlugin.default
 
-const mockGetRequest = jest.fn()
-jest.mock('../../tokens.js', () => ({
-  getRequest: (...args) => mockGetRequest(...args)
-}))
-
 const buildInteractiveMap = () => {
   const handlers = {}
   return {
@@ -43,7 +38,7 @@ describe('searchPlugin', () => {
     expect(config.osNamesURL).toContain('https://api.os.uk/search/names/v1/find')
   })
 
-  it('should build the plugin with the OS names search, transformRequest and england region', () => {
+  it('should build the plugin with the expected parameters, ', () => {
     const { searchPlugin } = loadSearchPlugin()
     searchPlugin()
 
@@ -55,10 +50,6 @@ describe('searchPlugin', () => {
     }))
     const config = mockCreateSearchPlugin.mock.calls[0][0]
     expect(config.osNamesURL).toContain('https://api.os.uk/search/names/v1/find')
-
-    // transformRequest is the getRequest import, forwarded through the mocked tokens module
-    config.transformRequest('some-request')
-    expect(mockGetRequest).toHaveBeenCalledWith('some-request')
   })
 
   it('should add a single search button', () => {

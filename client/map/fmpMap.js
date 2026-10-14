@@ -1,6 +1,6 @@
 import InteractiveMap from '@defra/interactive-map'
 import esriProvider from '@defra/interactive-map/providers/esri'
-import { setupEsriConfig, getDefraMapConfig } from './tokens.js'
+import { getDefraMapConfig } from './services/getDefraMapConfig.js'
 import { siteBoundary } from './interactive-map-helpers/siteBoundary.js'
 import { mapState } from './interactive-map-helpers/mapState.js'
 import { initialisePlugins, attachInteractiveMapToPlugins, getPluginValues, updatePlugin, createPlugins } from './plugins/initialisePlugins.js'
@@ -10,10 +10,8 @@ export class FmpMap extends InteractiveMap {
     if (!FmpMap.defraMapConfig) {
       throw new Error('You must await FmpMap.initialise() before creating an FmpMap instance')
     }
-    const mapProvider = esriProvider({ setupConfig: setupEsriConfig })
-
     super('map', {
-      mapProvider,
+      mapProvider: esriProvider(),
       ...interactiveMapOptions,
       extent: siteBoundary.buffedExtents || interactiveMapOptions.extent
     })

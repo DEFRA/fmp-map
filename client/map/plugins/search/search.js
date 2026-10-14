@@ -1,5 +1,4 @@
 import createSearchPlugin from '@defra/interactive-map/plugins/search'
-import { getRequest as transformRequest } from '../../tokens.js'
 import { colours } from '../../colours.js'
 
 const SEARCH_BUTTON_ID = 'map-search'
@@ -23,8 +22,7 @@ export const initialiseSearchPlugin = () => pluginConfig
 
 export const searchPlugin = () => {
   const plugin = createSearchPlugin({
-    ...pluginConfig,
-    transformRequest, // This will go once the token handling is replaced with a proxy
+    ...pluginConfig
   })
 
   plugin.hideButton = () => {
