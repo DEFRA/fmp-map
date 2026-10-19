@@ -1,7 +1,5 @@
 const mockGetDefraMapConfig = jest.fn()
-const mockSetupEsriConfig = jest.fn()
-jest.mock('./tokens.js', () => ({
-  setupEsriConfig: (...args) => mockSetupEsriConfig(...args),
+jest.mock('./services/getDefraMapConfig.js', () => ({
   getDefraMapConfig: (...args) => mockGetDefraMapConfig(...args)
 }))
 
@@ -36,7 +34,6 @@ jest.mock('@defra/interactive-map/providers/esri', () => mockInteractiveMapMocks
 
 const mockInteractiveMapInstance = { on: jest.fn(), addButton: jest.fn() }
 const mockInteractiveMapConstructor = mockInteractiveMapMocks.interactiveMap.default
-const mockEsriProvider = mockInteractiveMapMocks.esriProvider.default
 
 const loadFmpMap = () => {
   jest.resetModules()
@@ -152,20 +149,6 @@ describe('FmpMap', () => {
         label: 'Help',
         href: '/map-help'
       }))
-    })
-
-    it('should configure the esri provider with the setupEsriConfig helper', async () => {
-      const FmpMap = loadFmpMap()
-      await FmpMap.initialise()
-
-      // eslint-disable-next-line no-new
-      new FmpMap({})
-
-      const providerArgs = mockEsriProvider.mock.calls[0][0]
-      expect(typeof providerArgs.setupConfig).toBe('function')
-
-      providerArgs.setupConfig('some-config')
-      expect(mockSetupEsriConfig).toHaveBeenCalledWith('some-config')
     })
   })
 

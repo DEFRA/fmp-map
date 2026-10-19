@@ -37,7 +37,7 @@ export const initialisePlugins = (defraMapConfig) => {
   pluginValues.menu = initialiseMenuPlugin()
   pluginValues.mapStyle = initialiseMapStylePlugin(defraMapConfig.OS_ACCOUNT_NUMBER)
   pluginValues.scaleBar = initialiseScaleBarPlugin()
-  pluginValues.search = initialiseSearchPlugin()
+  pluginValues.search = initialiseSearchPlugin(defraMapConfig.fmpProxyUrl)
   pluginValues.draw = initialiseDrawPlugin()
   pluginValues.frame = initialiseFramePlugin()
   pluginValues.interact = initialiseInteractPlugin()
