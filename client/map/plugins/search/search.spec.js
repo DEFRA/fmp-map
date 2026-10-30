@@ -38,6 +38,18 @@ describe('searchPlugin', () => {
     expect(config.osNamesURL).toEqual('http://locahost:3005/place-lookup/{query}')
   })
 
+  it('should set transformRequest instead of osNamesURL when no proxy url is given (prototype)', () => {
+    const mockTransform = jest.fn()
+    jest.doMock('../../_fmp-app-specific/index.js', () => ({ transformSearchRequest: mockTransform }))
+    const { initialiseSearchPlugin } = loadSearchPlugin()
+
+    const config = initialiseSearchPlugin()
+
+    expect(config.transformRequest).toBe(mockTransform)
+    expect(config.osNamesURL).toBeUndefined()
+    jest.dontMock('../../_fmp-app-specific/index.js')
+  })
+
   it('should build the search plugin with the expected parameters, ', () => {
     const { searchPlugin } = loadSearchPlugin()
     searchPlugin()

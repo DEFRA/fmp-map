@@ -4,14 +4,16 @@ import { getDefraMapConfig } from './services/getDefraMapConfig.js'
 import { siteBoundary } from './interactive-map-helpers/siteBoundary.js'
 import { mapState } from './interactive-map-helpers/mapState.js'
 import { initialisePlugins, attachInteractiveMapToPlugins, getPluginValues, updatePlugin, createPlugins } from './plugins/initialisePlugins.js'
+import { setupEsriConfig } from './_fmp-app-specific/index.js'
 
 export class FmpMap extends InteractiveMap {
-  constructor (interactiveMapOptions) {
+  constructor (interactiveMapOptions, useProxy = false) {
     if (!FmpMap.defraMapConfig) {
       throw new Error('You must await FmpMap.initialise() before creating an FmpMap instance')
     }
+
     super('map', {
-      mapProvider: esriProvider(),
+      mapProvider: esriProvider({ setupConfig: FmpMap.setupConfig }),
       ...interactiveMapOptions,
       extent: siteBoundary.buffedExtents || interactiveMapOptions.extent
     })
@@ -32,6 +34,9 @@ export class FmpMap extends InteractiveMap {
   static async initialise () {
     const defraMapConfig = await getDefraMapConfig()
     FmpMap.defraMapConfig = defraMapConfig
+    // setupProxyConfig is used by fmp-app - behind a proxy
+    // setupEsriConfig is used by the prototype (still appends tokens at runtime)
+    FmpMap.setupConfig = setupEsriConfig
     mapState.defraMapConfig = defraMapConfig
     initialisePlugins(defraMapConfig)
     return FmpMap.defraMapConfig
