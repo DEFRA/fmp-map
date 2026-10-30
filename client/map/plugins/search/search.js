@@ -1,5 +1,6 @@
 import createSearchPlugin from '@defra/interactive-map/plugins/search'
 import { colours } from '../../colours.js'
+import { transformSearchRequest } from '../../_fmp-app-specific/index.js'
 
 const SEARCH_BUTTON_ID = 'map-search'
 const pluginConfig = {
@@ -18,13 +19,18 @@ const pluginConfig = {
 }
 
 export const initialiseSearchPlugin = (fmpProxyUrl) => {
-  pluginConfig.osNamesURL = `${fmpProxyUrl}/place-lookup/{query}`
+  if (fmpProxyUrl) {
+    pluginConfig.osNamesURL = `${fmpProxyUrl}/place-lookup/{query}`
+  } else { // Prototype only
+    pluginConfig.osNamesURL = 'https://api.os.uk/search/names/v1/find?query={query}&fq=local_type:postcode%20local_type:hamlet%20local_type:village%20local_type:town%20local_type:city%20local_type:suburban_area%20local_type:other_settlement&maxresults=100'
+    pluginConfig.transformRequest = transformSearchRequest
+  }
   return pluginConfig
 }
 
 export const searchPlugin = () => {
   const plugin = createSearchPlugin({
-    ...pluginConfig
+    ...pluginConfig,
   })
 
   plugin.hideButton = () => {

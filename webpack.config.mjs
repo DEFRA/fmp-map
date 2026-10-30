@@ -1,4 +1,5 @@
 import path from 'path'
+import webpack from 'webpack'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 
@@ -25,6 +26,10 @@ export default {
     }
   },
   plugins: [
+    // the prototype build swaps the fmp-app-specific implementation for the prototype one
+    new webpack.NormalModuleReplacementPlugin(/_fmp-app-specific/, (resource) => {
+      resource.request = resource.request.replace('_fmp-app-specific', '_prototype-specific')
+    }),
     new MiniCssExtractPlugin({
       filename: '[name].css'
     }),
