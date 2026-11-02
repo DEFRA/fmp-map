@@ -1,5 +1,6 @@
 import { terms } from '../../terms.js'
 import { colours } from '../../colours.js'
+import { getEsriTileName } from '../../_fmp-app-specific/getEsriTileName.js'
 
 // These are the values for flood zone 2 present day. The other flood zones will override the fz value as appropriate.
 const infoPanelData = {
@@ -65,7 +66,7 @@ export const surfaceWaterDatasetGenerator = ({ agolVectorTileUrl, layerNameSuffi
     id: `${id}-extents`,
     label: terms.labels.surfaceWater,
     groupLabel: terms.labels.surfaceWater,
-    tiles: `${agolVectorTileUrl}/${tileName}${layerNameSuffix}/VectorTileServer`,
+    tiles: `${agolVectorTileUrl}/${getEsriTileName(tileName)}`,
     showInKey: true,
     sourceLayer,
     style: { fill: { outdoor: colours.nonFloodZoneLight, dark: colours.nonFloodZoneDark }, },
@@ -77,7 +78,7 @@ export const surfaceWaterDatasetGenerator = ({ agolVectorTileUrl, layerNameSuffi
     id: `${id}-depths`,
     label: terms.labels.surfaceWaterDepthInMillimetres,
     groupLabel: terms.labels.surfaceWater,
-    tiles: `${agolVectorTileUrl}/${tileName}${layerNameSuffix}/VectorTileServer`,
+    tiles: `${agolVectorTileUrl}/${getEsriTileName(tileName)}`,
     showInKey: false,
     sourceLayer,
     visibleWhen: { menu: { ...visibleWhenMenu, depth: ['depthAll'] } },

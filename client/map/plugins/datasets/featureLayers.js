@@ -1,5 +1,6 @@
 import { terms } from '../../terms.js'
 import { colours } from '../../colours.js'
+import { getEsriTileName } from '../../_fmp-app-specific/getEsriTileName.js'
 
 const featureLayerDefaults = {
   type: 'FeatureService',
@@ -84,15 +85,14 @@ const datasetFloodDefences = {
 export const featureLayers = (agolServiceUrl, layerNameSuffix) => [
   {
     ...datasetMainRivers,
-    // NOTE: Main Rivers does not have the _NON_PRODUCTION ${layerNameSuffix}
-    tiles: `${agolServiceUrl}/Statutory_Main_River_Map/FeatureServer`,
+    tiles: `${agolServiceUrl}/${getEsriTileName('main-rivers')}`,
   },
   {
     ...datasetWaterStorageAreas,
-    tiles: `${agolServiceUrl}/Flood_Storage_Areas${layerNameSuffix}/FeatureServer`,
+    tiles: `${agolServiceUrl}/${getEsriTileName('flood-storage')}`,
   },
   {
     ...datasetFloodDefences,
-    tiles: `${agolServiceUrl}/Defences${layerNameSuffix}/FeatureServer`,
+    tiles: `${agolServiceUrl}/${getEsriTileName('flood-defences')}`,
   }
 ]

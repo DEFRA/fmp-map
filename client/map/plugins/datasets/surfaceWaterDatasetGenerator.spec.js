@@ -7,7 +7,7 @@ const baseArgs = {
   agolVectorTileUrl: 'https://example.com/arcgis/rest/services',
   layerNameSuffix: '_NON_PRODUCTION',
   id: 'surfacewater-presentday-low',
-  tileName: 'Surface_Water_Spatial_Planning_1_in_1000_Depths',
+  tileName: 'sw-low',
   sourceLayer: 'Surface Water Spatial Planning 1 in 1000 Depths',
   timeframe: ['presentday'],
   aep: ['low']
