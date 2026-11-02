@@ -85,14 +85,14 @@ const datasetFloodDefences = {
 export const featureLayers = (agolServiceUrl, layerNameSuffix) => [
   {
     ...datasetMainRivers,
-    tiles: `${agolServiceUrl}/${getEsriTileName('main-rivers')}`,
+    tiles: `${agolServiceUrl}/${getEsriTileName('main-rivers')}/FeatureServer`,
   },
   {
     ...datasetWaterStorageAreas,
-    tiles: `${agolServiceUrl}/${getEsriTileName('flood-storage')}`,
+    tiles: `${agolServiceUrl}/${getEsriTileName('flood-storage')}/FeatureServer`,
   },
   {
     ...datasetFloodDefences,
-    tiles: `${agolServiceUrl}/${getEsriTileName('flood-defences')}`,
+    tiles: `${agolServiceUrl}/${getEsriTileName('flood-defences')}/FeatureServer`,
   }
 ]
