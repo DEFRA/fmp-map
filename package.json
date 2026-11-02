@@ -22,6 +22,7 @@
     "eslint": "eslint",
     "test": "NOLOG=true jest --runInBand",
     "build": "webpack",
+    "build:prototype": "webpack --env prototype",
     "start": "node index.js"
   },
   "dependencies": {
