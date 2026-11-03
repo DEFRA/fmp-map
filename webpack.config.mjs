@@ -5,7 +5,16 @@ import HtmlWebpackPlugin from 'html-webpack-plugin'
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
-export default {
+// The default build uses the fmp-app-specific implementations (this is what is published as the npm package).
+// `npm run build:prototype` (webpack --env prototype) builds the GitHub Pages prototype instead.
+const prototypePlugins = [
+  // the prototype build swaps the fmp-app-specific implementation for the prototype one
+  new webpack.NormalModuleReplacementPlugin(/_fmp-app-specific/, (resource) => {
+    resource.request = resource.request.replace('_fmp-app-specific', '_prototype-specific')
+  })
+]
+
+export default (env = {}) => ({
   entry: {
     map: [
       path.join(__dirname, 'client/map/index.js'),
@@ -26,10 +35,7 @@ export default {
     }
   },
   plugins: [
-    // the prototype build swaps the fmp-app-specific implementation for the prototype one
-    new webpack.NormalModuleReplacementPlugin(/_fmp-app-specific/, (resource) => {
-      resource.request = resource.request.replace('_fmp-app-specific', '_prototype-specific')
-    }),
+    ...(env.prototype ? prototypePlugins : []),
     new MiniCssExtractPlugin({
       filename: '[name].css'
     }),
@@ -82,4 +88,4 @@ export default {
     maxEntrypointSize: 2048000,
     maxAssetSize: 2048000
   }
-}
+})

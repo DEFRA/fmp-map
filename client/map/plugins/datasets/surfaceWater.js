@@ -6,21 +6,21 @@ const swConfigs = [
   // Surface Water Present Day
   {
     id: 'surfacewater-presentday-low',
-    tileName: 'Surface_Water_Spatial_Planning_1_in_1000_Depths',
+    tileName: 'sw-low',
     sourceLayer: 'Surface Water Spatial Planning 1 in 1000 Depths',
     timeframe: ['presentday'],
     aep: ['low']
   },
   {
     id: 'surfacewater-presentday-medium',
-    tileName: 'Surface_Water_Spatial_Planning_1_in_100_Depths',
+    tileName: 'sw-medium',
     sourceLayer: 'Surface Water Spatial Planning 1 in 100 Depths',
     timeframe: ['presentday'],
     aep: ['medium']
   },
   {
     id: 'surfacewater-presentday-high',
-    tileName: 'Surface_Water_Spatial_Planning_1_in_30_Depths',
+    tileName: 'sw-high',
     sourceLayer: 'Surface Water Spatial Planning 1 in 30 Depths',
     timeframe: ['presentday'],
     aep: ['high']
@@ -28,21 +28,21 @@ const swConfigs = [
   // Surface Water Climate Change
   {
     id: 'surfacewater-climatechange-low',
-    tileName: 'Surface_Water_Spatial_Planning_1_in_1000_CCP1_Depths',
+    tileName: 'sw-cc-low',
     sourceLayer: 'Surface Water Spatial Planning 1 in 1000 CCP1 Depths',
     timeframe: ['climatechange'],
     aep: ['low']
   },
   {
     id: 'surfacewater-climatechange-medium',
-    tileName: 'Surface_Water_Spatial_Planning_1_in_100_CCP1_Depths',
+    tileName: 'sw-cc-medium',
     sourceLayer: 'Surface Water Spatial Planning 1 in 100 CCP1 Depths',
     timeframe: ['climatechange'],
     aep: ['medium']
   },
   {
     id: 'surfacewater-climatechange-high',
-    tileName: 'Surface_Water_Spatial_Planning_1_in_30_CCP1_Depths',
+    tileName: 'sw-cc-high',
     sourceLayer: 'Surface Water Spatial Planning 1 in 30 CCP1 Depths',
     timeframe: ['climatechange'],
     aep: ['high']

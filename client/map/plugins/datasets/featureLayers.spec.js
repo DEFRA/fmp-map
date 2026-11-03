@@ -10,17 +10,17 @@ describe('featureLayers', () => {
     expect(datasets.map((d) => d.id)).toEqual(['mainrivers', 'waterstorage', 'flooddefence'])
   })
 
-  it('should not apply the layer name suffix to the main rivers tiles url', () => {
+  it('should build the main rivers tiles url from the tile key', () => {
     const [mainRivers] = featureLayers(agolServiceUrl, layerNameSuffix)
 
-    expect(mainRivers.tiles).toBe(`${agolServiceUrl}/Statutory_Main_River_Map/FeatureServer`)
+    expect(mainRivers.tiles).toBe(`${agolServiceUrl}/main-rivers/FeatureServer`)
   })
 
-  it('should apply the layer name suffix to the water storage and flood defence tiles urls', () => {
+  it('should build the water storage and flood defence tiles urls from the tile keys', () => {
     const [, waterStorage, floodDefence] = featureLayers(agolServiceUrl, layerNameSuffix)
 
-    expect(waterStorage.tiles).toBe(`${agolServiceUrl}/Flood_Storage_Areas${layerNameSuffix}/FeatureServer`)
-    expect(floodDefence.tiles).toBe(`${agolServiceUrl}/Defences${layerNameSuffix}/FeatureServer`)
+    expect(waterStorage.tiles).toBe(`${agolServiceUrl}/flood-storage/FeatureServer`)
+    expect(floodDefence.tiles).toBe(`${agolServiceUrl}/flood-defences/FeatureServer`)
   })
 
   it('should mark every feature layer dataset as a shown-in-key FeatureService', () => {

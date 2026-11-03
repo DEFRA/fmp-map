@@ -1,5 +1,6 @@
 import { terms } from '../../terms.js'
 import { colours } from '../../colours.js'
+import { getEsriTileName } from '../../_fmp-app-specific/getEsriTileName.js'
 
 const visibleWhenFloodZones = { menu: { dataset: ['floodzones'] } }
 const visibleWhenClimateChange = { menu: { dataset: ['floodzones'], timeframe: ['climatechange'] } }
@@ -140,10 +141,10 @@ const datasetKeys = {
 export const floodZonesDatasets = ({ agolVectorTileUrl, layerNameSuffix }) => [
   {
     ...datasetFloodZonesCC,
-    tiles: `${agolVectorTileUrl}/Flood_Zones_2_and_3_Rivers_and_Sea_CCP1${layerNameSuffix}/VectorTileServer`,
+    tiles: `${agolVectorTileUrl}/${getEsriTileName('flood-zones-cc')}`,
   }, {
     ...datasetFloodZones,
-    tiles: `${agolVectorTileUrl}/Flood_Zones_2_and_3_Rivers_and_Sea${layerNameSuffix}/VectorTileServer`,
+    tiles: `${agolVectorTileUrl}/${getEsriTileName('flood-zones')}`,
   },
   datasetKeys
 ]
