@@ -31,12 +31,12 @@ describe('surfaceWaterDatasetGenerator', () => {
     expect(result.map((d) => d.id)).toEqual(['surfacewater-presentday-medium-extents', 'surfacewater-presentday-medium-depths'])
   })
 
-  it('should build tile urls from the agol url, tile name and layer name suffix', () => {
+  it('should build tile urls from the agol url and tile name', () => {
     const surfaceWaterDatasetGenerator = loadGenerator()
 
     const [, extentsDataset, depthDataset] = surfaceWaterDatasetGenerator(baseArgs)
 
-    const expectedUrl = `${baseArgs.agolVectorTileUrl}/${baseArgs.tileName}${baseArgs.layerNameSuffix}/VectorTileServer`
+    const expectedUrl = `${baseArgs.agolVectorTileUrl}/${baseArgs.tileName}`
     expect(extentsDataset.tiles).toBe(expectedUrl)
     expect(depthDataset.tiles).toBe(expectedUrl)
   })

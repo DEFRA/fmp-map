@@ -10,11 +10,11 @@ describe('floodZonesDatasets', () => {
     expect(datasets.map((d) => d.id)).toEqual(['floodzonescc', 'floodzones', 'floodzones-key'])
   })
 
-  it('should build the vector tile urls using the agol url and layer name suffix', () => {
+  it('should build the vector tile urls from the agol url and tile keys', () => {
     const [cc, presentDay] = floodZonesDatasets({ agolVectorTileUrl, layerNameSuffix })
 
-    expect(cc.tiles).toBe(`${agolVectorTileUrl}/Flood_Zones_2_and_3_Rivers_and_Sea_CCP1${layerNameSuffix}/VectorTileServer`)
-    expect(presentDay.tiles).toBe(`${agolVectorTileUrl}/Flood_Zones_2_and_3_Rivers_and_Sea${layerNameSuffix}/VectorTileServer`)
+    expect(cc.tiles).toBe(`${agolVectorTileUrl}/flood-zones-cc`)
+    expect(presentDay.tiles).toBe(`${agolVectorTileUrl}/flood-zones`)
   })
 
   it('should include climate change, no-data and no-data variant sublayers for the CC dataset', () => {
