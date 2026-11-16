@@ -3,6 +3,15 @@
 Repo for the Flood map for planning (FMP) fmp-map - dependent upon <https://github.com/DEFRA/interactive-map>
 This repository is part of the FMP suite and runs as a client component of: <https://github.com/DEFRA/fmp-app>
 
+## Using the styles in another project
+
+The package bundles its Sass, including the `@defra/interactive-map` CSS, so consumers need no direct dependency on interactive-map. In the consumer's entry stylesheet:
+
+```scss
+@use '@defra/fmp-map/sass/index';
+```
+
+The consumer's webpack build needs `sass` and `sass-loader`.
 
 ## Contributing to this project
 
