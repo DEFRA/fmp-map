@@ -301,7 +301,16 @@ body.js-enabled:not([data-im-error]) {
 // Surface Water 
 .im-c-map-key-list--ramp-horizontal {
   margin: 0 10px 10px 10px;
+  gap: unset;
+  display: flex;
+  flex-direction: row-reverse;
   .im-c-map-key-list__item {
+    &:first-child .im-c-map-key-symbol {
+      border-radius: 0 3px 3px 0;
+    }
+    &:last-child .im-c-map-key-symbol {
+      border-radius: 3px 0 0 3px;
+    }
     .im-c-map-key-list__item-symbol {
       // Make the fmp-app implementation double height
       max-height: calc(var(--line-height) * 2);
