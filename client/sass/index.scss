@@ -313,7 +313,10 @@ body.js-enabled:not([data-im-error]) {
     }
     .im-c-map-key-list__item-symbol {
       // Make the fmp-app implementation double height
-      max-height: calc(var(--line-height) * 2);
+      height: calc(var(--line-height) * 2);
+      .im-c-map-key-symbol {
+        height: 100%;
+      }
     }
     // Offset the labels, so they appear under the cell edges
     .im-c-map-key-list__item-label {
