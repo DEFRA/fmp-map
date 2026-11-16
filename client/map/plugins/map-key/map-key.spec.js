@@ -38,20 +38,20 @@ describe('mapKeyPlugin', () => {
 
     expect(config.groups['surface-water-depth-in-millimetres']).toEqual({
       groupLabel: 'Surface water depth in millimetres',
-      groupStyle: 'horizontal-ramp'
+      groupStyle: 'ramp'
     })
     expect(config.manifest.panels[0].id).toBe('mapKey')
     expect(config.manifest.buttons[0].id).toBe('mapKey')
   })
 
-  it('should build the plugin with a horizontal-ramp surface water depth group and a mapKey panel/button', () => {
+  it('should build the plugin with a ramp surface water depth group and a mapKey panel/button', () => {
     const { mapKeyPlugin } = loadMapKeyPlugin()
     mapKeyPlugin()
 
     const config = mockCreateMapKeyPlugin.mock.calls[0][0]
     expect(config.groups['surface-water-depth-in-millimetres']).toEqual({
       groupLabel: 'Surface water depth in millimetres',
-      groupStyle: 'horizontal-ramp'
+      groupStyle: 'ramp'
     })
     expect(config.manifest.panels[0].id).toBe('mapKey')
     expect(config.manifest.buttons[0].id).toBe('mapKey')

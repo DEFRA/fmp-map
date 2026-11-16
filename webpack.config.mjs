@@ -43,7 +43,8 @@ export default (env = {}) => ({
       template: path.join(__dirname, 'public/index.html'),
       chunks: ['map'],
       inject: false
-    })
+    }),
+    new webpack.IgnorePlugin({ resourceRegExp: /^(ol|proj4)(\/|$)/ })
   ],
   module: {
     rules: [

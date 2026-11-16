@@ -1,4 +1,4 @@
-@use '../../node_modules/sass-mq/mq' with (
+@use 'sass-mq/mq' with (
   $breakpoints: (
     mobile: 0px,
     tablet: 320px,
@@ -21,21 +21,25 @@ $govuk-new-typography-scale: true;
 
 // NOSONAR - bogus issue relating to @import statements having to be at the top.
 // which is wrong, as @use MUST be above @import
+// The interactive-map CSS is inlined by Sass (resolved from this package, so it works
+// when installed in another project) and comes before govuk-frontend, as it did when
+// these were plain CSS @imports hoisted to the top of the output.
+@import '@defra/interactive-map/css'; // NOSONAR
+@import '@defra/interactive-map/plugins/datasets/css'; // NOSONAR
+@import '@defra/interactive-map/plugins/menu/css'; // NOSONAR
+@import '@defra/interactive-map/plugins/map-key/css'; // NOSONAR
+@import '@defra/interactive-map/plugins/search/css'; // NOSONAR
+@import '@defra/interactive-map/plugins/map-styles/css'; // NOSONAR
+@import '@defra/interactive-map/plugins/frame/css'; // NOSONAR
+@import '@defra/interactive-map/plugins/scale-bar/css'; // NOSONAR
+@import '@defra/interactive-map/providers/esri/css'; // NOSONAR
+
 // govuk-frontend is imported from its SCSS source (not the precompiled .min.css)
 // so that $govuk-breakpoints above actually takes effect, and must come after
 // the govuk-* variables above (they need to be set before the source compiles)
-@import '../../node_modules/govuk-frontend/dist/govuk/all'; // NOSONAR
-@import '../../node_modules/@defra/interactive-map/dist/css/index.css'; // NOSONAR
-@import '../../node_modules/@defra/interactive-map/plugins/datasets/dist/css/index.css'; // NOSONAR
-@import '../../node_modules/@defra/interactive-map/plugins/menu/dist/css/index.css'; // NOSONAR
-@import '../../node_modules/@defra/interactive-map/plugins/map-key/dist/css/index.css'; // NOSONAR
-@import '../../node_modules/@defra/interactive-map/plugins/search/dist/css/index.css'; // NOSONAR
-@import '../../node_modules/@defra/interactive-map/plugins/beta/map-styles/dist/css/index.css'; // NOSONAR
-@import '../../node_modules/@defra/interactive-map/plugins/beta/frame/dist/css/index.css'; // NOSONAR
-@import '../../node_modules/@defra/interactive-map/plugins/beta/scale-bar/dist/css/index.css'; // NOSONAR
-@import '../../node_modules/@defra/interactive-map/providers/beta/esri/dist/css/index.css'; // NOSONAR
+@import 'govuk-frontend/dist/govuk/all'; // NOSONAR
 
-@import '../../client/map/plugins/opacity-slider/src/components/OpacitySlider.scss'; // NOSONAR
+@import '../map/plugins/opacity-slider/src/components/OpacitySlider.scss'; // NOSONAR
 
 @import 'planning'; // NOSONAR
 @import 'colours'; // NOSONAR
@@ -295,16 +299,33 @@ body.js-enabled:not([data-im-error]) {
 }
 
 // Surface Water 
-.im-c-map-key-list-horizontal-ramp {
+.im-c-map-key-list--ramp {
+  padding: 0;
+
+}
+
+.im-c-map-key-list--ramp-horizontal {
   margin: 0 10px 10px 10px;
+  gap: unset !important;
+  display: flex;
+  flex-direction: row-reverse;
   .im-c-map-key-list__item {
+    &:first-child .im-c-map-key-symbol {
+      border-radius: 0 3px 3px 0;
+    }
+    &:last-child .im-c-map-key-symbol {
+      border-radius: 3px 0 0 3px;
+    }
     .im-c-map-key-list__item-symbol {
       // Make the fmp-app implementation double height
-      max-height: calc(var(--line-height) * 2);
+      height: calc(var(--line-height) * 2);
+      .im-c-map-key-symbol {
+        height: 100%;
+      }
     }
-    // Offset the labels, so they appear under the cell edges
     .im-c-map-key-list__item-label {
-      transform: translateX(-50%);
+      transform: translateX(-50%); // Offset the labels, so they appear under the cell edges
+      margin-top: 10px;
     }
   }
 }
