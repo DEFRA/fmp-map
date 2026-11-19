@@ -23,7 +23,10 @@
     "test": "NOLOG=true jest --runInBand",
     "build": "webpack",
     "build:prototype": "webpack --env prototype",
-    "start": "node index.js"
+    "start": "node index.js",
+    "watch": "run-p watch:webpack watch:server",
+    "watch:webpack": "webpack --watch",
+    "watch:server": "nodemon --watch build --ext js,css --delay 1 index.js"
   },
   "dependencies": {
     "@arcgis/core": "5.1.13",
@@ -51,6 +54,8 @@
     "jsdom": "29.1.1",
     "mini-css-extract-plugin": "2.9.2",
     "neostandard": "0.13.0",
+    "nodemon": "3.1.14",
+    "npm-run-all2": "9.0.4",
     "sass": "1.93.2",
     "sass-loader": "16.0.3",
     "webpack": "5.104.1",

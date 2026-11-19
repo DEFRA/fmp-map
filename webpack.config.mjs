@@ -27,7 +27,8 @@ export default (env = {}) => ({
     filename: '[name].js',
     path: path.resolve(__dirname, 'build'),
     // relative publicPath so the bundle works when served from a GitHub Pages project subpath
-    publicPath: 'auto'
+    publicPath: 'auto',
+    clean: true
   },
   optimization: {
     splitChunks: {
