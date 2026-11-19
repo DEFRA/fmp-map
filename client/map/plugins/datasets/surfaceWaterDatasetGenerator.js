@@ -19,6 +19,7 @@ const depthDatasetSublayerIds = ['depthOverZero', 'depthOver150', 'depthOver300'
 const layerKeys = ['>2300mm', '1200-2300mm', '900-1200mm', '600-900mm', '300-600mm', '150-300mm', '<150mm']
 
 const subLayerGenerator = (sourceLayer, visibleWhenMenu, aep, timeframe) => {
+  // const visibleWhenMenu = { dataset: ['surfacewater'], timeframe, aep }
   let subLayerLastItemIndex = extentsDatasetSublayerIds.length
   const tf = timeframeToTf[timeframe]
   // Generate sublayers for each depth and extents range,
@@ -33,7 +34,9 @@ const subLayerGenerator = (sourceLayer, visibleWhenMenu, aep, timeframe) => {
       infoPanelData: { ...infoPanelData, aep, depth: terms.depth[depthDatasetSublayerIds[subLayerLastItemIndex - 1]], tf },
       esriStyleLayerId,
       showInKey: false,
-      visibleWhen: { menu: { ...visibleWhenMenu, depth: extentsDatasetSublayerIds.slice(0, subLayerLastItemIndex) } },
+      style: { fill: { outdoor: colours.nonFloodZoneLight, dark: colours.nonFloodZoneDark }, },
+      // visibleWhen: { menu: { ...visibleWhenMenu, depth: extentsDatasetSublayerIds.slice(0, subLayerLastItemIndex) } },
+      visibleWhen: { menu: { ...visibleWhenMenu, depth: ['depthAll'] } },
     })
 
     const depthSublayerId = depthDatasetSublayerIds[subLayerLastItemIndex - 1]
@@ -46,6 +49,8 @@ const subLayerGenerator = (sourceLayer, visibleWhenMenu, aep, timeframe) => {
       infoPanelData: { ...infoPanelData, aep, depth: terms.depth[depthDatasetSublayerIds[subLayerLastItemIndex - 1]], tf },
       esriStyleLayerId,
       label: terms.depth[depthSublayerId],
+      showInKey: false,
+      visibleWhen: { menu: { ...visibleWhenMenu, depth: extentsDatasetSublayerIds.slice(0, subLayerLastItemIndex) } },
       style: {
         stroke: depthSublayerStyle,
         fill: depthSublayerStyle,
@@ -105,5 +110,6 @@ export const surfaceWaterDatasetGenerator = ({ agolVectorTileUrl, layerNameSuffi
     })
   }
   // return [depthsKey, extentsDataset, depthDataset]
+  console.log('extentsDataset:', extentsDataset)
   return [depthsKey, extentsDataset]
 }
