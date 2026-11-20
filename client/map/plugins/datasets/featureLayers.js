@@ -24,9 +24,7 @@ const datasetMainRivers = {
       }
     },
     stroke: { outdoor: colours.mainRivers.default, dark: colours.mainRivers.dark },
-    fill: 'transparent',
     symbolDescription: { outdoor: 'dark teal line', dark: 'white line' },
-    keySymbolShape: 'line',
     strokeWidth: 3
   }
 }
@@ -76,9 +74,7 @@ const datasetFloodDefences = {
       }
     },
     stroke: { outdoor: colours.floodDefences.default, dark: colours.floodDefences.dark },
-    fill: 'transparent',
     symbolDescription: 'orange line',
-    keySymbolShape: 'line',
     strokeWidth: 3
   }
 }
