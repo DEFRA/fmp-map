@@ -37,6 +37,7 @@ const datasetWaterStorageAreas = {
   label: terms.labels.waterStorage,
   sourceLayer: 'Flood_Storage_Areas',
   visibleWhen: { menu: { waterstorage: [true] } },
+  infoPanelData: { ds: 'waterstorage' },
   style: {
     renderer: {
       type: 'simple',

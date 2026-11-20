@@ -47,8 +47,8 @@ class MapState {
 
   updateVisibleLayers () {
     this.visibleLayers = this.map?.allLayers?.items?.filter((item) =>
-      item.type === 'vector-tile' &&
       item.visible === true &&
+      (item.type === 'vector-tile' || item.type === 'feature') &&
       item.id !== 'baselayer'
     )
   }
@@ -61,14 +61,26 @@ class MapState {
     let topHitTestData = null
     if (hitTestResponse?.results?.length > 0) {
       const visibleHitTestData = hitTestResponse?.results.reduce((hitTestData, result) => {
-        const { layerId } = result.graphic?.origin || {}
+        // result.graphic?.origin?.layerId - is for vectorTileLayers
+        // result.graphic?.origin?.layer?.id - is for featureLayers
+        const layerId = result.graphic?.origin?.layerId || result.graphic?.origin?.layer?.id
         const { attributes } = result.graphic
-        if (!layerId) {
+        // skip main rivers and flood defence layers - as they have no infoPanel
+        if (!layerId || layerId === 'mainrivers' || layerId === 'flooddefence') {
           return hitTestData
         }
         const vtLayer = result.layer
-        const styleLayer = vtLayer?.getStyleLayer(layerId)
-        if (styleLayer?.layout?.visibility === 'visible') {
+        // getStyleLayer is used to retrieve the style layer for vector tile layers
+        // because, we need to check we are not hitting a hidden sublayer.
+        // It does not exist for feature layers, but we have already filtered to visible
+        // layers and they don't have sub layers - so a hit is a hit.
+        // This check has changed from a check for visibility, to a check for none,
+        // because the visibility property is not set until the layer is fully loaded.
+        // When the layer is fully loaded, the visibility property will be set correctly.
+        // This way we can click layers, that the user can see, while we are still waiting
+        // for full completion
+        const styleLayer = vtLayer?.getStyleLayer?.(layerId)
+        if (styleLayer?.layout?.visibility !== 'none') {
           hitTestData.push({ layerId, attributes })
         }
         return hitTestData
@@ -94,7 +106,8 @@ class MapState {
         return
       }
       lastHit = now
-      await this.view.hitTest(event, { include: this.visibleLayers })
+      const filter = this.visibleLayers.length > 0 ? { include: this.visibleLayers } : undefined
+      await this.view.hitTest(event, filter)
         .then(this.assignCursorStyleLayer)
       document.body.style.cursor = this.cursorStyleLayer ? 'pointer' : 'default'
     })
