@@ -48,6 +48,16 @@ describe('getInfoPanel', () => {
     })
   })
 
+  it('should omit the tf param when no timeframe is given', async () => {
+    globalThis.fetch.mockResolvedValue(buildResponse('markup'))
+
+    await getInfoPanel({ ds: 'waterstorage', coords: '1,2' })
+
+    const [url] = globalThis.fetch.mock.calls[0]
+    expect(url).toContain('ds=waterstorage')
+    expect(url).not.toContain('tf=')
+  })
+
   it('should replace COORDS and DEPTH placeholders in the returned markup', async () => {
     globalThis.fetch.mockResolvedValue(buildResponse('coords: COORDS depth: DEPTH'))
 
