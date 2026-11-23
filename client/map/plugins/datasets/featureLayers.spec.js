@@ -57,6 +57,14 @@ describe('featureLayers', () => {
     expect(waterStorage.style.stroke).toEqual({ outdoor: '#12393d', dark: '#ffffff' })
   })
 
+  it('should provide infoPanelData for the water storage dataset only', () => {
+    const [mainRivers, waterStorage, floodDefence] = featureLayers(agolServiceUrl, layerNameSuffix)
+
+    expect(waterStorage.infoPanelData).toEqual({ ds: 'waterstorage' })
+    expect(mainRivers.infoPanelData).toBeUndefined()
+    expect(floodDefence.infoPanelData).toBeUndefined()
+  })
+
   it('should label and colour the flood defence dataset as an orange line', () => {
     const [, , floodDefence] = featureLayers(agolServiceUrl, layerNameSuffix)
 

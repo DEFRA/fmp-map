@@ -16,7 +16,7 @@ const getInfoPanelMarkup = async (infoPanelValues) => {
   const queryString = new URLSearchParams()
   try {
     queryString.set('ds', infoPanelValues.ds)
-    queryString.set('tf', infoPanelValues.tf)
+    if (infoPanelValues.tf) { queryString.set('tf', infoPanelValues.tf) }
     if (infoPanelValues.fz) { queryString.set('fz', infoPanelValues.fz) }
     if (infoPanelValues.fs) { queryString.set('fs', formatFloodSource(infoPanelValues.fs)) }
     if (infoPanelValues.aep) { queryString.set('aep', infoPanelValues.aep) }

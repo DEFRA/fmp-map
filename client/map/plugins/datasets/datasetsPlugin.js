@@ -26,6 +26,14 @@ export const initialiseDatasetsPlugin = ({ agolServiceUrl, agolVectorTileUrl, la
 
 const esriStyleLayerIdToInfoPanelReducer = (datasets) => {
   return datasets.reduce((styleToValuesMap, dataset) => {
+    // Only featureLayers have infoPanelData at the top level
+    // and they don't have an esriStyleLayerId, so they are
+    // keyed with the dataset id instead.
+    // For vector tile layers, the esriStyleLayerId is used as
+    // the key, which only exists for sublayers (style layers).
+    if (dataset.infoPanelData) {
+      styleToValuesMap[dataset.id] = dataset.infoPanelData
+    }
     if (dataset.sublayers) {
       dataset.sublayers.forEach((sublayer) => {
         if (sublayer.infoPanelData) {
@@ -48,7 +56,6 @@ export const datasetsPlugin = () => {
     interactiveMap.on('datasets:ready', function () {
       plugin.ready = true
       mapState.updateVisibleLayers()
-      mapState.initPointerMove()
       reactiveUtils.when(
         () => (!mapState.view.updating),
         () => {

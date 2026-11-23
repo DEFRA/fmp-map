@@ -103,7 +103,7 @@ describe('mapState', () => {
   })
 
   describe('updateVisibleLayers', () => {
-    it('should keep only visible, non-baselayer vector-tile layers', () => {
+    it('should keep only visible, non-baselayer vector-tile and feature layers', () => {
       setUrl('http://localhost/')
       const mapState = loadMapState()
       mapState.map = {
@@ -112,6 +112,8 @@ describe('mapState', () => {
             { type: 'vector-tile', visible: true, id: 'floodZones' },
             { type: 'vector-tile', visible: false, id: 'surfaceWater' },
             { type: 'vector-tile', visible: true, id: 'baselayer' },
+            { type: 'feature', visible: true, id: 'waterstorage' },
+            { type: 'feature', visible: false, id: 'hiddenFeature' },
             { type: 'other', visible: true, id: 'notVectorTile' }
           ]
         }
@@ -120,7 +122,8 @@ describe('mapState', () => {
       mapState.updateVisibleLayers()
 
       expect(mapState.visibleLayers).toEqual([
-        { type: 'vector-tile', visible: true, id: 'floodZones' }
+        { type: 'vector-tile', visible: true, id: 'floodZones' },
+        { type: 'feature', visible: true, id: 'waterstorage' }
       ])
     })
 
@@ -229,6 +232,53 @@ describe('mapState', () => {
       expect(mapState.cursorStyleLayer).toBeNull()
     })
 
+    it('should use the layer id of the origin layer for feature layer hits', () => {
+      setUrl('http://localhost/')
+      const mapState = loadMapState()
+      const hitTestResponse = {
+        results: [
+          { graphic: { origin: { layer: { id: 'waterstorage' } }, attributes: { a: 1 } }, layer: {} }
+        ]
+      }
+
+      mapState.assignCursorStyleLayer(hitTestResponse)
+
+      expect(mapState.cursorStyleLayer).toBe('waterstorage')
+      expect(mapState.cursorAttributes).toEqual({ a: 1 })
+      expect(document.body.style.cursor).toBe('pointer')
+    })
+
+    it.each(['mainrivers', 'flooddefence'])('should ignore hits on the %s layer as it has no info panel', (id) => {
+      setUrl('http://localhost/')
+      const mapState = loadMapState()
+      const hitTestResponse = {
+        results: [
+          { graphic: { origin: { layer: { id } }, attributes: {} }, layer: {} }
+        ]
+      }
+
+      mapState.assignCursorStyleLayer(hitTestResponse)
+
+      expect(mapState.cursorStyleLayer).toBeNull()
+    })
+
+    it('should accept a vector tile style layer whose visibility is not yet set', () => {
+      setUrl('http://localhost/')
+      const mapState = loadMapState()
+      const hitTestResponse = {
+        results: [
+          {
+            graphic: { origin: { layerId: 'layer1' }, attributes: {} },
+            layer: { getStyleLayer: jest.fn().mockReturnValue({ layout: {} }) }
+          }
+        ]
+      }
+
+      mapState.assignCursorStyleLayer(hitTestResponse)
+
+      expect(mapState.cursorStyleLayer).toBe('layer1')
+    })
+
     it('should ignore results whose style layer is not visible', () => {
       setUrl('http://localhost/')
       const mapState = loadMapState()
@@ -282,6 +332,21 @@ describe('mapState', () => {
 
       expect(view.hitTest).toHaveBeenCalledWith({ x: 1, y: 1 }, { include: ['layer1'] })
       expect(document.body.style.cursor).toBe('default')
+    })
+
+    it('should hitTest without an include filter when there are no visible layers', async () => {
+      setUrl('http://localhost/')
+      const mapState = loadMapState()
+      const view = { on: jest.fn(), scale: 1000, hitTest: jest.fn().mockResolvedValue({ results: [] }) }
+      mapState.view = view
+      mapState.interfaceType = 'mouse'
+      mapState.visibleLayers = []
+
+      mapState.initPointerMove()
+      const onPointerMove = view.on.mock.calls.find(([name]) => name === 'pointer-move')[1]
+      await onPointerMove({ x: 1, y: 1 })
+
+      expect(view.hitTest).toHaveBeenCalledWith({ x: 1, y: 1 }, undefined)
     })
 
     it('should hitTest and set the cursor to pointer on pointer-move when a visible feature is hit', async () => {

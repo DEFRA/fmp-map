@@ -44,7 +44,8 @@ export const initialiseInteractPlugin = () => pluginConfig
 const initiateTriggerHitTest = (interactiveMap) => async () => {
   const screenPoint = await mapState.view.toScreen(mapState.view.center)
   mapState.updateVisibleLayers()
-  await mapState.view.hitTest(screenPoint, { include: mapState.visibleLayers }).then(mapState.assignCursorStyleLayer)
+  const filter = mapState.visibleLayers.length > 0 ? { include: mapState.visibleLayers } : undefined
+  await mapState.view.hitTest(screenPoint, filter).then(mapState.assignCursorStyleLayer)
   enableGetInfoButton = Boolean(mapState.cursorStyleLayer)
 
   interactiveMap.toggleButtonState('selectAtTarget', 'disabled', enableGetInfoButton)
@@ -98,6 +99,8 @@ export const interactPlugin = () => {
   _interactPlugin.attach = (interactiveMap) => {
     interactiveMap.on('map:ready', () => {
       _interactPlugin.enable()
+      // trigger the check for hovering over layers
+      mapState.initPointerMove()
     })
 
     _interactPlugin.triggerHitTest = initiateTriggerHitTest(interactiveMap)

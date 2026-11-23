@@ -24,6 +24,7 @@ const mockMapState = {
   visibleLayers: null,
   defraMapConfig: { version: '1.0' },
   updateVisibleLayers: jest.fn(),
+  initPointerMove: jest.fn(),
   assignCursorStyleLayer: jest.fn(),
   getInfoPanelDataForEsriStyleLayerId: jest.fn()
 }
@@ -61,7 +62,7 @@ describe('interactPlugin', () => {
       },
       cursorStyleLayer: null,
       cursorAttributes: null,
-      visibleLayers: null,
+      visibleLayers: [],
       defraMapConfig: { version: '1.0' }
     })
     mockMapState.getInfoPanelDataForEsriStyleLayerId.mockReturnValue({ ds: 'floodZones' })
@@ -135,6 +136,17 @@ describe('interactPlugin', () => {
       expect(mockMapState.assignCursorStyleLayer).toHaveBeenCalled()
     })
 
+    it('should hit test without an include filter when there are no visible layers', async () => {
+      const { interactPlugin: createPlugin } = loadInteract()
+      const interactPlugin = createPlugin()
+      interactPlugin.attach(buildInteractiveMap())
+      mockMapState.visibleLayers = []
+
+      await interactPlugin.triggerHitTest()
+
+      expect(mockMapState.view.hitTest).toHaveBeenCalledWith({ x: 1, y: 2 }, undefined)
+    })
+
     it('should toggle selectAtTarget disabled state to false when nothing is under the cursor', async () => {
       const { interactPlugin: createPlugin } = loadInteract()
       const interactPlugin = createPlugin()
@@ -171,10 +183,11 @@ describe('interactPlugin', () => {
       interactPlugin.attach(interactiveMap)
     })
 
-    it('should enable the plugin on map:ready', () => {
+    it('should enable the plugin and start the pointer move check on map:ready', () => {
       interactiveMap.trigger('map:ready')
 
       expect(interactPlugin.enable).toHaveBeenCalled()
+      expect(mockMapState.initPointerMove).toHaveBeenCalled()
     })
 
     it('should hit test and show the info panel when the marker moves onto a feature', async () => {

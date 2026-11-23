@@ -93,6 +93,7 @@ describe('datasetsPlugin', () => {
     mockFeatureLayers.mockReturnValue([{ id: 'mainrivers' }])
     mockMapState.interfaceType = null
     mockMapState.view = { updating: false }
+    mockMapState.initPointerMove.mockClear()
   })
 
   it('should create the plugin with the configured datasets', () => {
@@ -138,6 +139,19 @@ describe('datasetsPlugin', () => {
     expect(mockMapState.styleToValuesMap).toEqual({ 'layer-1': { ds: 'fz' } })
   })
 
+  it('should key top-level infoPanelData (feature layers) by dataset id', () => {
+    mockFeatureLayers.mockReturnValue([
+      { id: 'waterstorage', infoPanelData: { ds: 'waterstorage' } },
+      { id: 'mainrivers' } // no infoPanelData, should be skipped
+    ])
+    const { initialiseDatasetsPlugin, datasetsPlugin } = loadDatasetsPlugin()
+    initialiseDatasetsPlugin(config)
+
+    datasetsPlugin()
+
+    expect(mockMapState.styleToValuesMap).toEqual({ waterstorage: { ds: 'waterstorage' } })
+  })
+
   it('should not fail building the style map for datasets without sublayers', () => {
     const { initialiseDatasetsPlugin, datasetsPlugin } = loadDatasetsPlugin()
     initialiseDatasetsPlugin(config)
@@ -160,7 +174,7 @@ describe('datasetsPlugin', () => {
       expect(interactiveMap.on).toHaveBeenCalledWith('datasets:ready', expect.any(Function))
     })
 
-    it('should mark the plugin ready and update visible layers/pointer move once datasets are ready', () => {
+    it('should mark the plugin ready and update visible layers once datasets are ready', () => {
       const { initialiseDatasetsPlugin, datasetsPlugin } = loadDatasetsPlugin()
       initialiseDatasetsPlugin(config)
       const plugin = datasetsPlugin()
@@ -172,7 +186,7 @@ describe('datasetsPlugin', () => {
 
       expect(plugin.ready).toBe(true)
       expect(mockMapState.updateVisibleLayers).toHaveBeenCalled()
-      expect(mockMapState.initPointerMove).toHaveBeenCalled()
+      expect(mockMapState.initPointerMove).not.toHaveBeenCalled()
       expect(mockReactiveUtilsWhen).toHaveBeenCalledWith(expect.any(Function), expect.any(Function))
     })
 
